@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@unocss/reset": "0.58.5",
-    "vue": "^3.4.19"
+    "vue": "^3.4.19",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@antfu/eslint-config": "2.8.0",
