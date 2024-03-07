@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Header from './components/Header.vue'
 </script>
 
 <template>
-  <div class="p-1 b-1 bg-light-100 b-solid border-dark-50" />
+  <Header />
 </template>
