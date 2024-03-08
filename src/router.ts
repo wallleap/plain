@@ -27,9 +27,17 @@ const routes: RouteRecordRaw[] = [
     name: 'search',
     component: () => import('./views/Search.vue'),
   },
+  {
+    path: '/post/:num',
+    name: 'post',
+    component: () => import('./views/Post.vue'),
+  },
 ]
 
 export default createRouter({
   history: createWebHashHistory(),
   routes,
+  scrollBehavior() { // to, from, savedPosition
+    return { top: 0 }
+  },
 })

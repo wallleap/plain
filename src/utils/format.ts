@@ -63,24 +63,30 @@ function formatBody(body: string) {
 interface Post {
   id: number
   title: string
+  comments: number
+  comments_url: string
   created_at: string
   updated_at: string
   labels: string[]
   milestone: { name: string }
   summary: string
   body: string
+  number: number
 }
 export function formatPost(post: Post) {
-  const { id, title, created_at, updated_at, labels, body, milestone } = post
+  const { id, title, comments, comments_url, created_at, updated_at, labels, body, milestone, number } = post
   const obj = formatBody(body)
   return {
     id,
     title: obj.title || title,
     date: obj.date ? formatDate(obj.date) : formatDate(created_at),
     updated: obj.updated ? formatDate(obj.updated) : formatDate(updated_at),
+    comments,
+    comments_url,
     labels,
     milestone,
     summary: obj.summary,
     body: obj.body,
+    num: number,
   }
 }

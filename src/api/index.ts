@@ -31,3 +31,19 @@ export async function searchPosts({ keyword = '', page = 1, pageSize = 30 }) {
     posts,
   }
 }
+
+/*
+ * 获取博客详情
+ * */
+export async function getPost({ number = 0 }) {
+  const res = await fetchWithToken(`${BLOG_PREFIX}/issues/${number}?state=open`)
+  return formatPost(res)
+}
+
+/*
+ * 获取博客评论
+ * */
+export async function getComments({ url = '' }) {
+  const res = await fetchWithToken(url)
+  return res
+}
