@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
-import { getPosts } from '../api/index'
+import { getPosts, searchPosts } from '../api/index'
 
 interface Post {
   id: number
@@ -20,8 +20,7 @@ interface Post {
 }
 const PAGESIZE = import.meta.env.V_PAGESIZE
 const pageNum = ref(1)
-// TODO: 获取文章总数
-const totalCount = ref(56)
+const totalCount = ref(0)
 const posts: Post[] = reactive([])
 
 const showMore = computed(() => {
@@ -32,8 +31,11 @@ const showMore = computed(() => {
  * 获取文章列表
  * */
 onMounted(async () => {
-  const t = await getPosts({ page: pageNum.value, pageSize: PAGESIZE })
-  t.forEach((post: Post) => {
+  // 通过搜索获取文章数
+  const searchRes = await searchPosts({ keyword: '', page: 1, pageSize: 1 })
+  const getRes = await getPosts({ page: pageNum.value, pageSize: PAGESIZE })
+  totalCount.value = searchRes?.total_count
+  getRes.forEach((post: Post) => {
     posts.push(post)
   })
 })

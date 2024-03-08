@@ -15,7 +15,19 @@ const BLOG_PREFIX = `${GH_API}/repos/${USERNAME}/${REPO}`
 /*
  * 获取博客列表
  * */
-export async function getPosts({ page = 1, pageSize = 12 }) {
+export async function getPosts({ page = 1, pageSize = 30 }) {
   const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=open&page=${page}&per_page=${pageSize}`)
   return res.map(formatPost)
+}
+
+/*
+ * 搜索
+ * */
+export async function searchPosts({ keyword = '', page = 1, pageSize = 30 }) {
+  const res = await fetchWithToken(`${GH_API}/search/issues?q=${keyword}repo:${USERNAME}/${REPO}+type:issue+state:open&page=${page}&per_page=${pageSize}`)
+  const posts = res?.items.map(formatPost)
+  return {
+    total_count: res?.total_count,
+    posts,
+  }
 }
