@@ -20,4 +20,9 @@ export default defineConfig({
       }
     }],
   ],
+  theme: {
+    colors: {
+      primary: 'var(--primary)',
+    },
+  },
 })

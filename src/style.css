@@ -9,6 +9,7 @@
   -moz-osx-font-smoothing: grayscale;
 
   --body-bg: #fefefe;
+  --primary: #F3CE49;
 }
 
 body {
@@ -27,4 +28,8 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+a:hover {
+  color: var(--primary);
 }
