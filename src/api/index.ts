@@ -1,5 +1,6 @@
 import { fetchWithToken } from '../utils/fetch'
 import { formatPost } from '../utils/format'
+import type { Tag } from '../types/index'
 
 const GH_API = 'https://api.github.com'
 const USERNAME: string = import.meta.env.V_USERNAME
@@ -46,4 +47,20 @@ export async function getPost({ number = 0 }) {
 export async function getComments({ url = '' }) {
   const res = await fetchWithToken(url)
   return res
+}
+
+/*
+ * 获取文章标签
+ * */
+export async function getTags() {
+  const filterLabel = ['Inspiration', 'Friend', 'Book', 'About']
+  const res: Tag[] = await fetchWithToken(`${BLOG_PREFIX}/labels`)
+  const resFilter = res.filter(item => !filterLabel.includes(item.name))
+  const tags = resFilter.map(item => ({
+    id: item.id,
+    name: item.name,
+    count: item.count || 0,
+  }))
+
+  return tags
 }

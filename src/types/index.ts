@@ -18,3 +18,10 @@ export interface Post {
   }
   num: number
 }
+
+// Tag
+export interface Tag {
+  id: number
+  name: string
+  count: number
+}

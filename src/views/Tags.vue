@@ -1,7 +1,22 @@
 <script setup lang="ts">
+import { onMounted, reactive } from 'vue'
+import { getTags } from '../api/index'
+import type { Tag } from '../types/index'
 
+const tags: Tag[] = reactive([])
+
+onMounted(async () => {
+  tags.push(...await getTags())
+})
 </script>
 
 <template>
-  <div>Tags</div>
+  <div>
+    <ul class="list-none flex justify-center flex-wrap gap-x-2 select-none text-gray-400">
+      <li v-for="tag in tags" :key="tag.id" class="group position-relative cursor-pointer px-2 py-1 text-sm rounded-full hover:text-gray-600">
+        <span>{{ tag.name }}</span>
+        <span class="align-super ml-0.4 text-gray-300 font-size-2.4 group-hover:text-gray-400">{{ tag.count }}</span>
+      </li>
+    </ul>
+  </div>
 </template>
