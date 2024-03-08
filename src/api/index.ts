@@ -64,3 +64,11 @@ export async function getTags() {
 
   return tags
 }
+
+/*
+ * 获取关于页面
+ * */
+export async function getAbout() {
+  const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=closed&labels=About`)
+  return res?.[0].body
+}

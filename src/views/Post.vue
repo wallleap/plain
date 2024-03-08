@@ -41,9 +41,9 @@ onMounted(async () => {
     <h1 class="text-gray-800">
       {{ post.title }}
     </h1>
-    <div class="flex items-center gap-2 mb-10 text-gray-400">
-      <span><time><i class="fa-regular fa-pen-to-square mr-1 text-gray-300" />{{ post.date }}</time></span>
-      <span v-if="post.date !== post.updated"><time><i class="fa-regular fa-calendar mr-1 text-gray-300" />{{ post.updated }}</time></span>
+    <div class="flex items-center text-gray-400 gap-2 mb-10">
+      <span><time><i class="fa-regular mr-1 text-gray-300 fa-pen-to-square" />{{ post.date }}</time></span>
+      <span v-if="post.date !== post.updated"><time><i class="fa-regular mr-1 text-gray-300 fa-calendar" />{{ post.updated }}</time></span>
       <span>·</span>
       <span v-for="label in post.labels" :key="label.id"><i class="fa-solid fa-hashtag font-size-3 mr-0.6 text-gray-300" />{{ label.name }}</span>
     </div>
@@ -64,7 +64,7 @@ onMounted(async () => {
               <h3 class="m-0">
                 {{ comment.user.login }}
               </h3>
-              <p class="m-0 mt-1 font-size-3.4 text-gray-400">
+              <p class="m-0 font-size-3.4 text-gray-400 mt-1">
                 {{ formatDate(comment.created_at) }}
               </p>
             </div>
