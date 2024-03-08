@@ -13,7 +13,7 @@ const isDark = ref(false)
       </router-link>
     </h1>
     <nav class="m-0">
-      <ul class="flex m-0 p-0 list-none text-gray-500">
+      <ul class="flex m-0 p-0 list-none text-gray-500 select-none all:transition-400">
         <li class="cursor-pointer flex-shrink-0 w-9 h-9">
           <router-link to="/tags" class="flex flex-items-center flex-justify-center w-100% h-100% rd-100 hover:bg-gray-100">
             <i class="fa-regular fa-bookmark" />
@@ -33,9 +33,6 @@ const isDark = ref(false)
           <router-link to="/search" class="flex flex-items-center flex-justify-center w-100% h-100% rd-100 hover:bg-gray-100">
             <i class="fa-solid fa-magnifying-glass" />
           </router-link>
-        </li>
-        <li class="cursor-pointer flex-shrink-0 w-9 h-9">
-          <a href="https://github.com/wallleap" class="flex flex-items-center flex-justify-center w-100% h-100% rd-100 no-underline text-gray-500 hover:bg-gray-100"><i class="fa-brands fa-github" /></a>
         </li>
         <li class="flex flex-items-center flex-justify-center cursor-pointer flex-shrink-0 w-9 h-9 rd-100 hover:bg-gray-100" @click="isDark = !isDark">
           <i v-if="!isDark" class="fa-solid fa-sun" />
