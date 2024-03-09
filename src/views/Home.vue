@@ -30,7 +30,7 @@ onMounted(async () => {
           <h2 class="m-0 font-size-8 text-gray-600 font-bold dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-300">
             {{ post.title }}
           </h2>
-          <p class="m-y-2 font-size-4 text-gray-400 line-height-normal line-2 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400">
+          <p class="m-y-2 font-size-4 text-gray-400 line-height-normal dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400 line-2">
             <MarkdownIt :content="post.summary" />
           </p>
           <p class="m-y-4 font-size-3.4 text-gray-400 dark:text-gray-600 group-hover:text-gray-500">

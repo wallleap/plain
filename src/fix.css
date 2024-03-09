@@ -28,8 +28,6 @@ pre {
 
 code.hljs {
   border-radius: .5rem;
-  background: rgb(246 246 246);
-  color: rgb(75 85 99);
 }
 
 p code, ul code, blockquote code {
@@ -63,6 +61,10 @@ ul li::marker, ol li::marker {
   color: rgb(190, 190, 190);
 }
 
+[data-theme="dark"] ul li::marker, ol li::marker {
+  color: rgb(66, 63, 63);
+}
+
 nav ul li, footer ul li {
   list-style: none!important;
 }
@@ -73,6 +75,12 @@ blockquote {
   padding: .5rem 1rem;
   margin: 1rem 0;
   color: rgb(156 163 175);
+}
+
+[data-theme="dark"] blockquote {
+  border-left: 3px solid rgb(80, 79, 79);
+  background: rgb(36, 35, 35);
+  color: rgb(114, 120, 131);
 }
 
 div.table-container {
@@ -92,9 +100,17 @@ table th, table td {
   border: 1px solid rgb(242, 242, 242);
 }
 
+[data-theme="dark"] table th, table td {
+  border: 1px solid rgb(44, 43, 43);
+}
+
 table th {
   background: rgb(246 246 246);
   padding: .4rem;
+}
+
+[data-theme="dark"] table th {
+  background: rgb(31, 30, 30);
 }
 
 .about-page svg.icon {

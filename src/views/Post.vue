@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { getComments, getPost } from '../api/index'
 import { formatDate } from '../utils/format'
 import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
+import { useThemeStore } from '../stores/theme'
 
 const post: Post = reactive({
   id: 1,
@@ -26,6 +27,20 @@ const comments = reactive([]) as any[]
 const route = useRoute()
 const postNum = Number(route.params.num)
 const commentPageUrl = ref('')
+const cTheme = ref('light')
+const themeStore = useThemeStore()
+
+watchEffect(async () => {
+  cTheme.value = themeStore.curTheme
+  const href = cTheme.value === 'light' ? `https://cdn.wallleap.cn/css/atom-one-light.min.css` : `https://cdn.wallleap.cn/css/atom-one-dark.min.css`
+  const dy = document.querySelector('#dynamic-style')
+  dy?.remove()
+  const dynamicStyle = document.createElement('link')
+  dynamicStyle.rel = 'stylesheet'
+  dynamicStyle.href = `${href}`
+  dynamicStyle.id = 'dynamic-style'
+  document.head.appendChild(dynamicStyle)
+})
 
 onMounted(async () => {
   Object.assign(post, await getPost({ number: postNum }))
@@ -38,19 +53,19 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="text-gray-600 min-h-60vh">
-    <h1 class="text-gray-800">
+  <article class="text-gray-600 dark:text-gray-400 min-h-60vh">
+    <h1 class="text-gray-800 dark:text-gray-300">
       {{ post.title }}
     </h1>
     <div class="mb-10 text-gray-400 flex flex-wrap gap-2 items-center">
-      <span v-if="post.date"><time><i class="fa-regular fa-pen-to-square mr-1 text-gray-300" />{{ post.date }}</time></span>
-      <span v-if="post.date !== post.updated"><time><i class="fa-regular fa-calendar mr-1 text-gray-300" />{{ post.updated }}</time></span>
+      <span v-if="post.date"><time><i class="fa-regular fa-pen-to-square mr-1 text-gray-300 dark:text-gray-600" />{{ post.date }}</time></span>
+      <span v-if="post.date !== post.updated"><time><i class="fa-regular fa-calendar mr-1 text-gray-300 dark:text-gray-600" />{{ post.updated }}</time></span>
       <span>·</span>
-      <span v-for="label in post.labels" :key="label.id"><i class="fa-solid fa-hashtag mr-0.6 font-size-3 text-gray-300" />{{ label.name }}</span>
+      <span v-for="label in post.labels" :key="label.id"><i class="fa-solid fa-hashtag mr-0.6 font-size-3 text-gray-300 dark:text-gray-600" />{{ label.name }}</span>
     </div>
     <MarkdownIt :content="post.body" />
     <div v-if="post.body">
-      <h2 class="text-gray-700">
+      <h2 class="text-gray-700 dark:text-gray-300">
         评论
       </h2>
       <template v-if="comments.length > 0">
