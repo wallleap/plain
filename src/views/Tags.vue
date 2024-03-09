@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, watchEffect } from 'vue'
 import { getTags } from '../api/index'
 import { usePostsStore } from '../stores/posts'
 import type { Post, Tag } from '../types/index'
@@ -13,6 +13,9 @@ onMounted(async () => {
   tags.push(...await getTags())
   if (postsStore.postsRes.total_count === 0)
     postsStore.getPostsAction()
+})
+
+watchEffect(() => {
   Object.assign(posts, postsStore.postsRes.posts)
   tags.forEach((tag) => {
     tag.count = posts.filter(post => post.labels.some(label => label.id === tag.id)).length
@@ -35,7 +38,7 @@ function filterPost(id: number) {
     <ul class="list-none flex justify-center select-none text-gray-400 flex-wrap gap-x-2">
       <li v-for="tag in tags" :key="tag.id" class="group cursor-pointer position-relative rounded-full hover:text-gray-600 px-2 py-1 text-sm" @click="filterPost(tag.id)">
         <span>{{ tag.name }}</span>
-        <span class="text-gray-300 font-size-2.4 align-super ml-0.4 group-hover:text-gray-400">{{ tag.count }}</span>
+        <span v-if="tag.count > 0" class="text-gray-300 font-size-2.4 align-super ml-0.4 group-hover:text-gray-400">{{ tag.count }}</span>
       </li>
     </ul>
     <ul v-if="showPosts.length > 0" class="mt-6">
