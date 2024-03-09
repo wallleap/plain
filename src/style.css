@@ -17,12 +17,15 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background-color: var(--body-bg);
+  overflow-x: hidden;
 }
 
 #app {
   max-width: 650px;
   margin: 0 auto;
   padding: 0 1rem;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {

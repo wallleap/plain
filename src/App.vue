@@ -6,7 +6,9 @@ import BackToTop from './components/BackToTop.vue'
 
 <template>
   <Header />
-  <router-view class="my-20 min-h-60vh all:transition-150" />
+  <div class="my-20 min-h-60vh">
+    <router-view class="all:transition-150" />
+  </div>
   <Copyright />
   <BackToTop />
 </template>

@@ -33,7 +33,7 @@ onMounted(async () => {
         </a>
       </li>
     </ul>
-    <div class="text-gray-600 font-size-4">
+    <div v-if="friends.length" class="text-gray-600 font-size-4">
       <p>欢迎访问我的博客，希望可以给你带来帮助</p>
       <p>如果需要添加友链，请留言，我会尽快处理</p>
       <p>以下是本站的友链信息：</p>

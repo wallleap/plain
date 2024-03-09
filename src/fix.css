@@ -1,3 +1,7 @@
+p {
+  overflow-wrap: break-word;
+}
+
 img {
   max-width: 100%;
   border-radius: .25rem;
@@ -15,6 +19,11 @@ s {
   color: rgb(156 163 175);
   text-decoration-color:rgb(190 190 190);
   text-decoration-thickness: 1px;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 code.hljs {
@@ -58,12 +67,16 @@ blockquote {
   color: rgb(156 163 175);
 }
 
+div.table-container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 table {
   box-sizing: border-box;
   max-width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
-  width: 100%;
 }
 
 table th, table td {

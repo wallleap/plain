@@ -38,18 +38,18 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="text-gray-600">
+  <article class="text-gray-600 min-h-60vh">
     <h1 class="text-gray-800">
       {{ post.title }}
     </h1>
     <div class="flex flex-wrap text-gray-400 items-center gap-2 mb-10">
-      <span><time><i class="fa-regular mr-1 text-gray-300 fa-pen-to-square" />{{ post.date }}</time></span>
+      <span v-if="post.date"><time><i class="fa-regular mr-1 text-gray-300 fa-pen-to-square" />{{ post.date }}</time></span>
       <span v-if="post.date !== post.updated"><time><i class="fa-regular mr-1 text-gray-300 fa-calendar" />{{ post.updated }}</time></span>
       <span>·</span>
       <span v-for="label in post.labels" :key="label.id"><i class="fa-solid text-gray-300 font-size-3 fa-hashtag mr-0.6" />{{ label.name }}</span>
     </div>
     <MarkdownIt :content="post.body" />
-    <div>
+    <div v-if="post.body">
       <h2 class="text-gray-700">
         评论
       </h2>
