@@ -42,7 +42,7 @@ onMounted(async () => {
     <h1 class="text-gray-800">
       {{ post.title }}
     </h1>
-    <div class="flex text-gray-400 items-center gap-2 mb-10">
+    <div class="flex flex-wrap text-gray-400 items-center gap-2 mb-10">
       <span><time><i class="fa-regular mr-1 text-gray-300 fa-pen-to-square" />{{ post.date }}</time></span>
       <span v-if="post.date !== post.updated"><time><i class="fa-regular mr-1 text-gray-300 fa-calendar" />{{ post.updated }}</time></span>
       <span>·</span>
@@ -69,7 +69,6 @@ onMounted(async () => {
               </p>
             </div>
           </div>
-          <!-- TODO: Markdown 渲染 -->
           <div class="mt-3">
             <MarkdownIt :content="comment.body" />
           </div>

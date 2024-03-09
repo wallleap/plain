@@ -1,41 +1,20 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { getPosts, searchPosts } from '../api/index'
+import { onMounted, reactive } from 'vue'
+import { usePostsStore } from '../stores/posts'
 import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
 
-const PAGESIZE = import.meta.env.V_PAGESIZE
-const pageNum = ref(1)
-const totalCount = ref(0)
 const posts: Post[] = reactive([])
-
-const showMore = computed(() => {
-  return pageNum.value < totalCount.value / PAGESIZE && posts.length > 0
-})
+const postsStore = usePostsStore()
 
 /*
  * 获取文章列表
  * */
 onMounted(async () => {
-  // 通过搜索获取文章数
-  const searchRes = await searchPosts({ keyword: '', page: 1, pageSize: 1 })
-  const getRes = await getPosts({ page: pageNum.value, pageSize: PAGESIZE })
-  totalCount.value = searchRes?.total_count
-  getRes.forEach((post: Post) => {
-    posts.push(post)
-  })
+  if (postsStore.postsRes.total_count === 0)
+    await postsStore.getPostsAction()
+  posts.push(...postsStore.postsRes.posts)
 })
-
-/*
- * 加载下一页
- * */
-async function loadMore() {
-  pageNum.value++
-  const t = await getPosts({ page: pageNum.value, pageSize: PAGESIZE })
-  t.forEach((post: Post) => {
-    posts.push(post)
-  })
-}
 </script>
 
 <template>
@@ -61,9 +40,6 @@ async function loadMore() {
         </p>
       </router-link>
     </article>
-    <div class="mb-12 flex items-center text-gray-400 font-size-4 cursor-pointer gap-6">
-      <span v-show="showMore" class="flex items-center hover:text-gray-600 gap-1" @click="loadMore">加载更多<i class="fa-solid font-size-3.4 fa-chevron-right" /></span>
-    </div>
   </main>
   <p v-else class="font-size-4 text-gray-400 text-center">
     没有文章~
