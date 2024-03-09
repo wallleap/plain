@@ -1,5 +1,5 @@
 import { fetchWithToken } from '../utils/fetch'
-import { formatPost } from '../utils/format'
+import { formatFriend, formatPost } from '../utils/format'
 import type { Tag } from '../types/index'
 
 const GH_API = 'https://api.github.com'
@@ -11,7 +11,7 @@ if (!USERNAME || !REPO || !FR_REPO)
 
 // API 链接拼接
 const BLOG_PREFIX = `${GH_API}/repos/${USERNAME}/${REPO}`
-// const FR_PREFIX = `${GH_API}/repos/${USERNAME}/${FR_REPO}`
+const FR_PREFIX = `${GH_API}/repos/${USERNAME}/${FR_REPO}`
 
 /*
  * 获取博客列表
@@ -19,6 +19,14 @@ const BLOG_PREFIX = `${GH_API}/repos/${USERNAME}/${REPO}`
 export async function getPosts({ page = 1, pageSize = 30 }) {
   const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=open&page=${page}&per_page=${pageSize}`)
   return res.map(formatPost)
+}
+
+/*
+ * 获取友链列表
+ * */
+export async function getFriends({ page = 1, pageSize = 100000 }) {
+  const res = await fetchWithToken(`${FR_PREFIX}/issues?state=closed&page=${page}&per_page=${pageSize}&direction=asc`)
+  return res.map(formatFriend)
 }
 
 /*

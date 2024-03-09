@@ -19,6 +19,19 @@ export interface Post {
   num: number
 }
 
+// Friend
+export interface Friend {
+  id: number
+  name: string
+  avatar: string
+  url: string
+  desc: string
+  labels: {
+    id: number
+    name: string
+  }[]
+}
+
 // Tag
 export interface Tag {
   id: number

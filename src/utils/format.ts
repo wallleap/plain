@@ -90,3 +90,35 @@ export function formatPost(post: Post) {
     num: number,
   }
 }
+
+/*
+ * 格式化友链
+ * */
+interface Friend {
+  id: number
+  body: string
+  labels: string[]
+}
+export function formatFriend(friend: Friend) {
+  const { id, body, labels } = friend
+  const regex = /^name:\s(.*)\r\nurl:\s(.*)\r\navatar:\s(.*)\r\ndesc:\s(.*)$/
+  if (!regex.test(body)) {
+    return {
+      id,
+      name: '',
+      url: '#',
+      avatar: '',
+      desc: '',
+      labels,
+    }
+  }
+  const result = regex.exec(body)
+  return {
+    id,
+    name: result?.slice(1)[0],
+    url: result?.slice(1)[1],
+    avatar: result?.slice(1)[2],
+    desc: result?.slice(1)[3],
+    labels,
+  }
+}

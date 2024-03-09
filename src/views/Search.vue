@@ -29,7 +29,7 @@ async function searchFn() {
         <i class="fa-solid fa-magnifying-glass" />
       </button>
     </form>
-    <p class="text-center text-gray-500 font-size-3.6 mt-10">
+    <p class="text-gray-500 text-center font-size-3.6 mt-10">
       <span v-if="posts.length > 0">查找到 {{ posts.length }} 篇文章</span>
       <span v-else>输入文字搜索文章</span>
     </p>
@@ -39,7 +39,7 @@ async function searchFn() {
           <h2 class="m-0 font-bold font-size-5 group-hover:text-gray-700">
             {{ post.title }}
           </h2>
-          <p class="m-0 mt-2 font-size-3.6 line-height-normal text-gray-400 group-hover:text-gray-600">
+          <p class="m-0 mt-2 font-size-3.6 text-gray-400 group-hover:text-gray-600 line-height-normal">
             {{ post.summary }}
           </p>
         </router-link>

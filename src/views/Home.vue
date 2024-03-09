@@ -46,16 +46,16 @@ async function loadMore() {
           <span v-if="post.comments > 0" class="mr-3 text-gray-400 group-hover:text-gray-500"><i class="fa-regular fa-comments mr-1.4" />{{ post.comments }}</span>
           <span class="text-gray-400 group-hover:text-gray-500"><i class="fa-regular mr-1.4 fa-eye" />{{ post.comments }}</span>
         </div>
-        <h2 class="m-0 text-gray-600 font-size-8 font-bold group-hover:text-gray-800">
+        <h2 class="m-0 text-gray-600 font-bold font-size-8 group-hover:text-gray-800">
           {{ post.title }}
         </h2>
-        <p class="text-gray-400 group-hover:text-gray-500 m-y-2 font-size-4 line-height-normal line-2">
+        <p class="text-gray-400 group-hover:text-gray-500 font-size-4 line-height-normal m-y-2 line-2">
           {{ post.summary }}
         </p>
         <p class="font-size-3.4 text-gray-400 group-hover:text-gray-500 m-y-4">
           <span class="mr-2">{{ post.date }}</span>
           <template v-if="post.labels.length > 0">
-            <span v-for="label in post.labels" :key="label.id" class="mr-1.4"><i class="fa-solid text-gray-300 fa-hashtag font-size-3 mr-0.6" />{{ label.name }}</span>
+            <span v-for="label in post.labels" :key="label.id" class="mr-1.4"><i class="fa-solid text-gray-300 font-size-3 fa-hashtag mr-0.6" />{{ label.name }}</span>
           </template>
         </p>
       </router-link>

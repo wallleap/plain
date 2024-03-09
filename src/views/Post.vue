@@ -59,7 +59,7 @@ onMounted(async () => {
         </p>
         <div v-for="comment in comments" :key="comment.id" class="mb-6">
           <div class="flex items-center line-height-none">
-            <img class="w-10 h-10 border-rd" :src="comment.user.avatar_url" alt="avatar">
+            <img class="border-rd w-10 h-10" :src="comment.user.avatar_url" alt="avatar">
             <div class="m-l-2">
               <h3 class="m-0">
                 {{ comment.user.login }}
