@@ -25,7 +25,7 @@ export async function getPosts({ page = 1, pageSize = 30 }) {
  * 搜索
  * */
 export async function searchPosts({ keyword = '', page = 1, pageSize = 30 }) {
-  const res = await fetchWithToken(`${GH_API}/search/issues?q=${keyword}repo:${USERNAME}/${REPO}+type:issue+state:open&page=${page}&per_page=${pageSize}`)
+  const res = await fetchWithToken(`${GH_API}/search/issues?q=${keyword}+repo:${USERNAME}/${REPO}+type:issue+state:open&page=${page}&per_page=${pageSize}`)
   const posts = res?.items.map(formatPost)
   return {
     total_count: res?.total_count,
