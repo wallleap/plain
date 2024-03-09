@@ -42,11 +42,11 @@ onMounted(async () => {
     <h1 class="text-gray-800">
       {{ post.title }}
     </h1>
-    <div class="flex flex-wrap text-gray-400 items-center gap-2 mb-10">
-      <span v-if="post.date"><time><i class="fa-regular mr-1 text-gray-300 fa-pen-to-square" />{{ post.date }}</time></span>
-      <span v-if="post.date !== post.updated"><time><i class="fa-regular mr-1 text-gray-300 fa-calendar" />{{ post.updated }}</time></span>
+    <div class="mb-10 text-gray-400 flex flex-wrap gap-2 items-center">
+      <span v-if="post.date"><time><i class="fa-regular fa-pen-to-square mr-1 text-gray-300" />{{ post.date }}</time></span>
+      <span v-if="post.date !== post.updated"><time><i class="fa-regular fa-calendar mr-1 text-gray-300" />{{ post.updated }}</time></span>
       <span>·</span>
-      <span v-for="label in post.labels" :key="label.id"><i class="fa-solid text-gray-300 font-size-3 fa-hashtag mr-0.6" />{{ label.name }}</span>
+      <span v-for="label in post.labels" :key="label.id"><i class="fa-solid fa-hashtag mr-0.6 font-size-3 text-gray-300" />{{ label.name }}</span>
     </div>
     <MarkdownIt :content="post.body" />
     <div v-if="post.body">
@@ -58,13 +58,13 @@ onMounted(async () => {
           共有 {{ comments.length }} 条评论
         </p>
         <div v-for="comment in comments" :key="comment.id" class="mb-6">
-          <div class="flex items-center line-height-none">
-            <img class="w-10 h-10 border-rd" :src="comment.user.avatar_url" alt="avatar">
+          <div class="line-height-none flex items-center">
+            <img class="border-rd h-10 w-10" :src="comment.user.avatar_url" alt="avatar">
             <div class="m-l-2">
               <h3 class="m-0">
                 {{ comment.user.login }}
               </h3>
-              <p class="m-0 text-gray-400 font-size-3.4 mt-1">
+              <p class="m-0 mt-1 font-size-3.4 text-gray-400">
                 {{ formatDate(comment.created_at) }}
               </p>
             </div>

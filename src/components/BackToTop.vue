@@ -31,8 +31,8 @@ function backTop() {
 </script>
 
 <template>
-  <div class="flex flex-items-center select-none cursor-pointer text-gray-400 justify-center hover:text-gray-600 pos-fixed bottom-6 right-6 all:transition-400">
-    <div v-show="showBackTop" class="flex flex-items-center justify-center hover:bg-gray-100 w-10 h-10 border-rd-100vh" @click="backTop">
+  <div class="text-gray-400 flex pos-fixed cursor-pointer select-none justify-center flex-items-center bottom-6 right-6 hover:text-gray-600 all:transition-400 dark:hover:text-gray-200">
+    <div v-show="showBackTop" class="border-rd-100vh flex h-10 w-10 justify-center flex-items-center hover:bg-gray-100 dark:hover:bg-gray-500" @click="backTop">
       <i class="fa-solid fa-arrow-up" />
     </div>
   </div>

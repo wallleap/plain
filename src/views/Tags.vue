@@ -34,11 +34,11 @@ function filterPost(id: number) {
 </script>
 
 <template>
-  <div>
-    <ul class="list-none flex justify-center select-none text-gray-400 flex-wrap gap-x-2">
-      <li v-for="tag in tags" :key="tag.id" class="group cursor-pointer position-relative rounded-full hover:text-gray-600 px-2 py-1 text-sm" @click="filterPost(tag.id)">
+  <nav>
+    <ul class="list-none text-gray-400 flex flex-wrap gap-x-2 select-none justify-center">
+      <li v-for="tag in tags" :key="tag.id" class="group px-2 py-1 rounded-full text-sm position-relative cursor-pointer hover:text-gray-600 dark:hover:text-gray-300" @click="filterPost(tag.id)">
         <span>{{ tag.name }}</span>
-        <span v-if="tag.count > 0" class="text-gray-300 font-size-2.4 align-super ml-0.4 group-hover:text-gray-400">{{ tag.count }}</span>
+        <span v-if="tag.count > 0" class="ml-0.4 font-size-2.4 text-gray-300 align-super dark:text-gray-600 group-hover:text-gray-400 dark:hover:text-gray-500">{{ tag.count }}</span>
       </li>
     </ul>
     <ul v-if="showPosts.length > 0" class="mt-6">
@@ -51,5 +51,5 @@ function filterPost(id: number) {
         </router-link>
       </li>
     </ul>
-  </div>
+  </nav>
 </template>

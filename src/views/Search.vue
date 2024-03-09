@@ -18,32 +18,34 @@ async function searchFn() {
 
 <template>
   <div class="line-height-none">
-    <form class="w-100% position-relative box-border" @submit.prevent="searchFn">
+    <form class="position-relative w-100% box-border" @submit.prevent="searchFn">
       <input
         v-model="keyword"
         type="text"
         placeholder="Search"
-        class="font-size-4 w-100% text-gray-600 bg-gray-100 box-border rounded-full placeholder-gray-400 border-none py-3 px-5"
+        class="placeholder-gray-400 dark:placeholder-gray-700 px-5 py-3 bg-gray-100 rounded-full border-none font-size-4 text-gray-600 w-100% box-border dark:bg-gray-800 dark:text-gray-300"
       >
-      <button type="submit" class="cursor-pointer text-gray-600 box-border border-none rounded-full position-absolute hover:bg-gray-300 bg-gray-200 top-50% translate-y--50% right-2 p-x-3 p-y-2">
+      <button type="submit" class="p-x-3 p-y-2 bg-gray-200 rounded-full border-none text-gray-600 position-absolute cursor-pointer right-2 top-50% box-border translate-y--50% dark:bg-gray-700 hover:bg-gray-300 dark:text-gray-500 dark:hover:bg-gray-600">
         <i class="fa-solid fa-magnifying-glass" />
       </button>
     </form>
-    <p class="text-gray-500 text-center font-size-3.6 mt-10">
+    <p class="mt-10 font-size-3.6 text-gray-500 text-center">
       <span v-if="posts.length > 0">查找到 {{ posts.length }} 篇文章</span>
       <span v-else>输入文字搜索文章</span>
     </p>
-    <ul v-if="posts.length > 0" class="list-none m-0 p-0 text-gray-500">
-      <li v-for="post in posts" :key="post.id" class="group mt-6">
-        <router-link :to="{ name: 'post', params: { num: post.num } }">
-          <h2 class="m-0 font-bold font-size-5 group-hover:text-gray-700">
-            {{ post.title }}
-          </h2>
-          <p class="m-0 mt-2 font-size-3.6 text-gray-400 group-hover:text-gray-600 line-height-normal">
-            {{ post.summary }}
-          </p>
-        </router-link>
-      </li>
-    </ul>
+    <nav>
+      <ul v-if="posts.length > 0" class="list-none p-0 m-0 text-gray-500 dark:text-gray-400">
+        <li v-for="post in posts" :key="post.id" class="group mt-6">
+          <router-link :to="{ name: 'post', params: { num: post.num } }">
+            <h2 class="m-0 font-size-5 font-bold group-hover:text-gray-700 dark:group-hover:text-gray-300">
+              {{ post.title }}
+            </h2>
+            <p class="m-0 mt-2 font-size-3.6 text-gray-400 line-height-normal group-hover:text-gray-600 dark:group-hover:text-gray-400">
+              {{ post.summary }}
+            </p>
+          </router-link>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>

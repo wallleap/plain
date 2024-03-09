@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
+import { useThemeStore } from '../stores/theme'
 
 // types
 interface UTTERANCES_OPTS {
@@ -13,6 +14,8 @@ interface UTTERANCES_OPTS {
     crossorigin: string
   }
 }
+
+const themeStore = useThemeStore()
 
 // parse utterances code
 const script = import.meta.env.V_UTTERANCES_CODE
@@ -42,22 +45,28 @@ const utterancesOpts: UTTERANCES_OPTS = computed(() => {
   return obj
 })
 
-// create utterances script
-const utterancesEL = document.createElement('script')
-utterancesEL.async = utterancesOpts.value.async || false
-utterancesEL.setAttribute('src', utterancesOpts.value.src || 'https://utteranc.es/client.js')
-utterancesEL.setAttribute('repo', utterancesOpts.value.repo)
-utterancesEL.setAttribute('issue-term', utterancesOpts.value.term)
-if (utterancesOpts.value.label !== '')
-  utterancesEL.setAttribute('label', utterancesOpts.value.label)
-utterancesEL.setAttribute('theme', utterancesOpts.value.theme)
-utterancesEL.setAttribute('crossorigin', utterancesOpts.value.crossorigin || 'anonymous')
+const localTheme = ref('light')
 const commentContent = ref<HTMLDivElement | null>(null)
-onMounted(() => {
+
+watchEffect(() => {
+  localTheme.value = themeStore.curTheme
+  // create utterances script
+  const utterancesEL = document.createElement('script')
+  utterancesEL.async = utterancesOpts.value.async || false
+  utterancesEL.setAttribute('src', utterancesOpts.value.src || 'https://utteranc.es/client.js')
+  utterancesEL.setAttribute('repo', utterancesOpts.value.repo)
+  utterancesEL.setAttribute('issue-term', utterancesOpts.value.term)
+  if (utterancesOpts.value.label !== '')
+    utterancesEL.setAttribute('label', utterancesOpts.value.label)
+  utterancesEL.setAttribute('crossorigin', utterancesOpts.value.crossorigin || 'anonymous')
+  if (localTheme.value && localTheme.value === 'dark')
+    utterancesEL.setAttribute('theme', 'github-dark')
+  else
+    utterancesEL.setAttribute('theme', utterancesOpts.value.theme)
   const utterEls = document.querySelectorAll('.utterances')
   if (utterEls.length > 0) {
     utterEls.forEach((utterEl) => {
-      document.body.removeChild(utterEl)
+      utterEl.remove()
     })
   }
   commentContent.value?.appendChild(utterancesEL)

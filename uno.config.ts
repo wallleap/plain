@@ -1,4 +1,4 @@
-import { defineConfig } from 'unocss'
+import { defineConfig, presetMini } from 'unocss'
 
 export default defineConfig({
   rules: [
@@ -25,4 +25,12 @@ export default defineConfig({
       primary: 'var(--primary)',
     },
   },
+  presets: [
+    presetMini({
+      dark: {
+        light: '[data-theme=light]',
+        dark: '[data-theme=dark]',
+      },
+    }),
+  ],
 })

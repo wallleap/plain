@@ -1,40 +1,52 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useThemeStore } from '../stores/theme'
 
 const title = import.meta.env.V_TITLE
 const isDark = ref(false)
+const themeStore = useThemeStore()
+
+document.documentElement.dataset.theme = themeStore.curTheme
+isDark.value = themeStore.curTheme !== 'light'
+
+function toggleDark() {
+  const cTheme = themeStore.curTheme === 'light' ? 'dark' : 'light'
+  document.documentElement.dataset.theme = cTheme
+  themeStore.toggleTheme(cTheme)
+  isDark.value = !isDark.value
+}
 </script>
 
 <template>
-  <header class="flex items-center justify-between m-y-3 line-height-none">
-    <h1 class="m-0 p-0 font-size-2xl align-middle">
+  <header class="m-y-3 line-height-none flex justify-between items-center">
+    <h1 class="p-0 m-0 font-size-2xl align-middle">
       <router-link to="/" class="cursor-pointer">
         {{ title }}
       </router-link>
     </h1>
     <nav class="m-0">
-      <ul class="flex m-0 p-0 list-none text-gray-500 select-none all:transition-100">
-        <li class="m-0 p-0 cursor-pointer flex-shrink-0 w-9 h-9">
-          <router-link to="/tags" class="flex flex-items-center flex-justify-center w-100% h-100% rd-100 hover:text-gray-700 hover:bg-gray-100">
+      <ul class="list-none p-0 m-0 text-gray-500 flex select-none all:transition-100">
+        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
+          <router-link to="/tags" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-regular fa-bookmark" />
           </router-link>
         </li>
-        <li class="m-0 p-0 cursor-pointer flex-shrink-0 w-9 h-9">
-          <router-link to="/about" class="flex flex-items-center flex-justify-center w-100% h-100% rd-100 hover:bg-gray-100 hover:text-gray-700">
+        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
+          <router-link to="/about" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-solid fa-bullseye" />
           </router-link>
         </li>
-        <li class="m-0 p-0 cursor-pointer flex-shrink-0 w-9 h-9">
-          <router-link to="/friend" class="flex flex-items-center flex-justify-center w-100% h-100% rd-100 hover:bg-gray-100 hover:text-gray-700">
+        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
+          <router-link to="/friend" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-solid fa-link" />
           </router-link>
         </li>
-        <li class="m-0 p-0 cursor-pointer flex-shrink-0 w-9 h-9">
-          <router-link to="/search" class="flex flex-items-center flex-justify-center w-100% h-100% rd-100 hover:bg-gray-100 hover:text-gray-700">
+        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
+          <router-link to="/search" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-solid fa-magnifying-glass" />
           </router-link>
         </li>
-        <li class="m-0 p-0 flex flex-items-center flex-justify-center cursor-pointer flex-shrink-0 w-9 h-9 rd-100 hover:bg-gray-100 hover:text-gray-700" @click="isDark = !isDark">
+        <li class="p-0 m-0 rd-100 flex flex-shrink-0 h-9 w-9 cursor-pointer flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200" @click="toggleDark">
           <i v-if="!isDark" class="fa-solid fa-sun" />
           <i v-else class="fa-solid fa-moon" />
         </li>

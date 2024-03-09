@@ -12,6 +12,11 @@
   --primary: #F3CE49;
 }
 
+:root[data-theme=dark] body {
+  --body-bg: #121212;
+  color: rgb(229 231 235);
+}
+
 body {
   margin: 0;
   min-width: 320px;
