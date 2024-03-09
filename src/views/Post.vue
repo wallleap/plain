@@ -3,6 +3,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getComments, getPost } from '../api/index'
 import { formatDate } from '../utils/format'
+import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
 
 const post: Post = reactive({
@@ -45,10 +46,9 @@ onMounted(async () => {
       <span><time><i class="fa-regular mr-1 text-gray-300 fa-pen-to-square" />{{ post.date }}</time></span>
       <span v-if="post.date !== post.updated"><time><i class="fa-regular mr-1 text-gray-300 fa-calendar" />{{ post.updated }}</time></span>
       <span>·</span>
-      <span v-for="label in post.labels" :key="label.id"><i class="fa-solid text-gray-300 fa-hashtag font-size-3 mr-0.6" />{{ label.name }}</span>
+      <span v-for="label in post.labels" :key="label.id"><i class="fa-solid text-gray-300 font-size-3 fa-hashtag mr-0.6" />{{ label.name }}</span>
     </div>
-    <!-- TODO: Markdown 渲染 -->
-    <div>{{ post.body }}</div>
+    <MarkdownIt :content="post.body" />
     <div>
       <h2 class="text-gray-700">
         评论
@@ -59,7 +59,7 @@ onMounted(async () => {
         </p>
         <div v-for="comment in comments" :key="comment.id" class="mb-6">
           <div class="flex items-center line-height-none">
-            <img class="border-rd w-10 h-10" :src="comment.user.avatar_url" alt="avatar">
+            <img class="w-10 h-10 border-rd" :src="comment.user.avatar_url" alt="avatar">
             <div class="m-l-2">
               <h3 class="m-0">
                 {{ comment.user.login }}
@@ -71,7 +71,7 @@ onMounted(async () => {
           </div>
           <!-- TODO: Markdown 渲染 -->
           <div class="mt-3">
-            {{ comment.body }}
+            <MarkdownIt :content="comment.body" />
           </div>
         </div>
       </template>

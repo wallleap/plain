@@ -1,0 +1,88 @@
+img {
+  max-width: 100%;
+  border-radius: .25rem;
+}
+
+hr {
+  opacity: .1;
+}
+
+a {
+  color: rgb(156 163 175);
+}
+
+s {
+  color: rgb(156 163 175);
+  text-decoration-color:rgb(190 190 190);
+  text-decoration-thickness: 1px;
+}
+
+code.hljs {
+  border-radius: .5rem;
+  background: rgb(246 246 246);
+  color: rgb(75 85 99);
+}
+
+p code, ul code, blockquote code {
+  background: rgb(246 246 246);
+  color: #ff502c;
+  padding: .25rem .5rem;
+  border-radius: .25rem;
+  font-size: .9rem;
+}
+
+ul, ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: rgb(107 114 128);
+}
+
+ul.contains-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul li, ol li {
+  margin-bottom: .5rem;
+}
+
+ul li::marker, ol li::marker {
+  color: rgb(190, 190, 190);
+}
+
+blockquote {
+  border-left: 3px solid rgb(226, 226, 226);
+  background: rgb(246 246 246);
+  padding: .5rem 1rem;
+  margin: 1rem 0;
+  color: rgb(156 163 175);
+}
+
+table {
+  box-sizing: border-box;
+  max-width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+table th, table td {
+  padding: .2rem .4rem;
+  border: 1px solid rgb(242, 242, 242);
+}
+
+table th {
+  background: rgb(246 246 246);
+  padding: .4rem;
+}
+
+.about-page svg.icon {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -.2em;
+}
+.about-page li svg {
+  width: 1.4em;
+  height: 1.4em;
+  vertical-align: -.4em;
+}

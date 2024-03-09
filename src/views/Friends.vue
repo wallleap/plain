@@ -20,10 +20,10 @@ onMounted(async () => {
   <div>
     <ul class="m-0 p-0 flex gap-4 list-none justify-center flex-wrap">
       <li v-for="friend in friends" :key="friend.id" class="cursor-pointer" :title="friend.desc">
-        <span v-if="friend.labels[0]?.name === '未添加'" class="position-relative inline-block group">
-          <span class="bg-gray-100 text-gray-600 position-absolute z-10 left--2 top--1 font-size-2.4 py-0.5 px-2 rounded-full group-hover:translate-y--4">{{ friend.labels[0]?.name }}</span>
+        <span v-if="friend.labels[0]?.name === '未添加'" class="position-relative group inline-block">
+          <span class="bg-gray-100 text-gray-600 position-absolute font-size-2.4 px-2 rounded-full z-10 left--2 top--1 py-0.5 group-hover:translate-y--4">{{ friend.labels[0]?.name }}</span>
           <img class="bg-gray-100 inline-block rounded-full group-hover:translate-y--4 w-12 h-12" :src="friend.avatar" :alt="friend.name">
-          <h3 class="position-absolute py-0.5 px-2 hidden z-20 left-50% translate-x--50% bottom--2 text-nowrap font-size-3 bg-light-300 rounded group-hover:inline group-hover:text-gray-600">{{ friend.name }}</h3>
+          <h3 class="position-absolute py-0.5 px-2 font-size-3 group-hover:text-gray-600 hidden z-20 left-50% translate-x--50% bottom--2 text-nowrap bg-light-300 rounded group-hover:inline">{{ friend.name }}</h3>
         </span>
         <a v-else :href="friend.url" target="_blank" class="position-relative inline-block group">
           <span v-if="friend.labels[0] && friend.labels[0]?.name !== '失联'" class="position-absolute z-10 left--2 top--1 font-size-2.4 py-0.5 px-2 rounded-full group-hover:translate-y--4 bg-blue-100 text-blue-600">{{ friend.labels[0]?.name }}</span>

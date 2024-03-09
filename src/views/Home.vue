@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { getPosts, searchPosts } from '../api/index'
+import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
 
 const PAGESIZE = import.meta.env.V_PAGESIZE
@@ -50,7 +51,7 @@ async function loadMore() {
           {{ post.title }}
         </h2>
         <p class="text-gray-400 group-hover:text-gray-500 font-size-4 line-height-normal m-y-2 line-2">
-          {{ post.summary }}
+          <MarkdownIt :content="post.summary" />
         </p>
         <p class="font-size-3.4 text-gray-400 group-hover:text-gray-500 m-y-4">
           <span class="mr-2">{{ post.date }}</span>
