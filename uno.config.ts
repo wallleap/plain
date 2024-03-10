@@ -1,4 +1,4 @@
-import { defineConfig, presetMini } from 'unocss'
+import { defineConfig, presetUno } from 'unocss'
 
 export default defineConfig({
   rules: [
@@ -26,7 +26,7 @@ export default defineConfig({
     },
   },
   presets: [
-    presetMini({
+    presetUno({
       dark: {
         light: '[data-theme=light]',
         dark: '[data-theme=dark]',
