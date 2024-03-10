@@ -6,6 +6,8 @@ import { formatDate } from '../utils/format'
 import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
 import { useThemeStore } from '../stores/theme'
+import darkCSS from '../assets/css/atom-one-dark.css?raw'
+import lightCSS from '../assets/css/atom-one-light.css?raw'
 
 const post: Post = reactive({
   id: 1,
@@ -32,12 +34,11 @@ const themeStore = useThemeStore()
 
 watchEffect(async () => {
   cTheme.value = themeStore.curTheme
-  const href = cTheme.value === 'light' ? `https://cdn.wallleap.cn/css/atom-one-light.min.css` : `https://cdn.wallleap.cn/css/atom-one-dark.min.css`
+  const innerCode = cTheme.value === 'light' ? lightCSS : darkCSS
   const dy = document.querySelector('#dynamic-style')
   dy?.remove()
-  const dynamicStyle = document.createElement('link')
-  dynamicStyle.rel = 'stylesheet'
-  dynamicStyle.href = `${href}`
+  const dynamicStyle = document.createElement('style')
+  dynamicStyle.innerHTML = innerCode
   dynamicStyle.id = 'dynamic-style'
   document.head.appendChild(dynamicStyle)
 })
@@ -53,7 +54,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="text-gray-600 dark:text-gray-400 min-h-60vh">
+  <article class="text-gray-600 min-h-60vh dark:text-gray-400">
     <h1 class="text-gray-800 dark:text-gray-300">
       {{ post.title }}
     </h1>

@@ -1,5 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -35,7 +35,8 @@ const routes: RouteRecordRaw[] = [
 ]
 
 export default createRouter({
-  history: createWebHashHistory(),
+  // history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
   scrollBehavior() { // to, from, savedPosition
     return { top: 0 }
