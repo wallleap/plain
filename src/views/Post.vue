@@ -27,7 +27,6 @@ const post: Post = reactive({
 })
 const comments = reactive([]) as any[]
 const route = useRoute()
-const postNum = Number(route.params.num)
 const commentPageUrl = ref('')
 const cTheme = ref('light')
 const themeStore = useThemeStore()
@@ -44,7 +43,7 @@ watchEffect(async () => {
 })
 
 onMounted(async () => {
-  Object.assign(post, await getPost({ number: postNum }))
+  Object.assign(post, await getPost({ number: Number(route.params.num) }))
   commentPageUrl.value = post.comments_url.replace('comments', '')
     .replace('api.', '')
     .replace('repos/', '')

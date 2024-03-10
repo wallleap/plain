@@ -36,7 +36,7 @@ async function searchFn() {
     <nav>
       <ul v-if="posts.length > 0" class="list-none p-0 m-0 text-gray-500 dark:text-gray-400">
         <li v-for="post in posts" :key="post.id" class="group mt-6">
-          <router-link :to="{ name: 'post', params: { num: post.num } }">
+          <router-link :to="{ name: 'post', params: { num: Number(post.num) } }">
             <h2 class="m-0 font-size-5 font-bold group-hover:text-gray-700 dark:group-hover:text-gray-300">
               {{ post.title }}
             </h2>

@@ -21,7 +21,7 @@ onMounted(async () => {
   <div class="home">
     <main v-if="posts?.length > 0" class="line-height-none select-none">
       <article v-for="post in posts" :key="post.id" class="group mb-12 cursor-pointer">
-        <router-link :to="{ name: 'post', params: { num: post.num } }">
+        <router-link :to="{ name: 'post', params: { num: Number(post.num) } }">
           <div v-if="post.milestone?.title || post.comments > 0" class="m-y-3 flex items-center">
             <span class="p-x-2 p-y-1 mr-3 bg-gray-100 border-rd font-size-3.4 text-gray-400 dark:bg-gray-800 dark:text-gray-600 group-hover:text-gray-500">{{ post.milestone.title }}</span>
             <span v-if="post.comments > 0" class="mr-3 text-gray-400 dark:text-gray-600 group-hover:text-gray-500"><i class="fa-regular fa-comments mr-1.4" />{{ post.comments }}</span>

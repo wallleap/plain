@@ -46,7 +46,7 @@ function filterPost(id: number) {
         该标签下共有 {{ showPosts.length }} 篇文章
       </p>
       <li v-for="showPost in showPosts" :key="showPost.id">
-        <router-link :to="{ name: 'post', params: { num: showPost.num } }">
+        <router-link :to="{ name: 'post', params: { num: Number(showPost.num) } }">
           {{ showPost.title }}
         </router-link>
       </li>
