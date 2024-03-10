@@ -35,10 +35,10 @@ function filterPost(id: number) {
 
 <template>
   <nav>
-    <ul v-if="posts.length > 0" class="list-none text-gray-400 flex flex-wrap gap-x-2 select-none justify-center">
-      <li v-for="tag in tags" :key="tag.id" class="group px-2 py-1 rounded-full text-sm position-relative cursor-pointer hover:text-gray-600 dark:hover:text-gray-300" @click="filterPost(tag.id)">
+    <ul v-if="posts.length > 0" class="flex flex-wrap select-none list-none justify-center gap-x-2 text-gray-400">
+      <li v-for="tag in tags" :key="tag.id" class="group position-relative cursor-pointer rounded-full px-2 py-1 text-sm hover:text-gray-600 dark:hover:text-gray-300" @click="filterPost(tag.id)">
         <span>{{ tag.name }}</span>
-        <span v-if="tag.count > 0" class="ml-0.4 font-size-2.4 text-gray-300 align-super dark:text-gray-600 group-hover:text-gray-400 dark:hover:text-gray-500">{{ tag.count }}</span>
+        <span v-if="tag.count > 0" class="ml-0.4 align-super font-size-2.4 text-gray-300 dark:text-gray-600 group-hover:text-gray-400 dark:hover:text-gray-500">{{ tag.count }}</span>
       </li>
     </ul>
     <ul v-if="showPosts.length > 0" class="mt-6">

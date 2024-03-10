@@ -19,18 +19,18 @@ onMounted(async () => {
 
 <template>
   <div class="home">
-    <main v-if="posts?.length > 0" class="line-height-none select-none">
+    <main v-if="posts?.length > 0" class="select-none line-height-none">
       <article v-for="post in posts" :key="post.id" class="group mb-12 cursor-pointer">
         <router-link :to="{ name: 'post', params: { num: Number(post.num) } }">
           <div v-if="post.milestone?.title || post.comments > 0" class="m-y-3 flex items-center">
-            <span class="p-x-2 p-y-1 mr-3 bg-gray-100 border-rd font-size-3.4 text-gray-400 dark:bg-gray-800 dark:text-gray-600 group-hover:text-gray-500">{{ post.milestone.title }}</span>
+            <span class="mr-3 border-rd bg-gray-100 p-x-2 p-y-1 font-size-3.4 text-gray-400 dark:bg-gray-800 dark:text-gray-600 group-hover:text-gray-500">{{ post.milestone.title }}</span>
             <span v-if="post.comments > 0" class="mr-3 text-gray-400 dark:text-gray-600 group-hover:text-gray-500"><i class="fa-regular fa-comments mr-1.4" />{{ post.comments }}</span>
             <span class="text-gray-400 dark:text-gray-600 group-hover:text-gray-500"><i class="fa-regular fa-eye mr-1.4" />{{ post.comments }}</span>
           </div>
           <h2 class="m-0 font-size-8 text-gray-600 font-bold dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-300">
             {{ post.title }}
           </h2>
-          <p class="m-y-2 font-size-4 text-gray-400 line-height-normal dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400 line-2">
+          <p class="m-y-2 font-size-4 text-gray-400 line-height-normal line-2 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400">
             <MarkdownIt :content="post.summary" />
           </p>
           <p class="m-y-4 font-size-3.4 text-gray-400 dark:text-gray-600 group-hover:text-gray-500">
@@ -42,7 +42,7 @@ onMounted(async () => {
         </router-link>
       </article>
     </main>
-    <p v-else class="font-size-4 text-gray-400 text-center">
+    <p v-else class="text-center font-size-4 text-gray-400">
       没有文章~
     </p>
   </div>

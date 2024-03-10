@@ -53,11 +53,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="text-gray-600 min-h-60vh dark:text-gray-400">
+  <article class="min-h-60vh text-gray-600 dark:text-gray-400">
     <h1 class="text-gray-800 dark:text-gray-300">
       {{ post.title }}
     </h1>
-    <div class="mb-10 text-gray-400 flex flex-wrap gap-2 items-center">
+    <div class="mb-10 flex flex-wrap items-center gap-2 text-gray-400">
       <span v-if="post.date"><time><i class="fa-regular fa-pen-to-square mr-1 text-gray-300 dark:text-gray-600" />{{ post.date }}</time></span>
       <span v-if="post.date !== post.updated"><time><i class="fa-regular fa-calendar mr-1 text-gray-300 dark:text-gray-600" />{{ post.updated }}</time></span>
       <span>·</span>
@@ -73,8 +73,8 @@ onMounted(async () => {
           共有 {{ comments.length }} 条评论
         </p>
         <div v-for="comment in comments" :key="comment.id" class="mb-6">
-          <div class="line-height-none flex items-center">
-            <img class="border-rd h-10 w-10" :src="comment.user.avatar_url" alt="avatar">
+          <div class="flex items-center line-height-none">
+            <img class="h-10 w-10 border-rd" :src="comment.user.avatar_url" alt="avatar">
             <div class="m-l-2">
               <h3 class="m-0">
                 {{ comment.user.login }}

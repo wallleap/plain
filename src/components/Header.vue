@@ -18,35 +18,35 @@ function toggleDark() {
 </script>
 
 <template>
-  <header class="m-y-3 line-height-none flex justify-between items-center">
-    <h1 class="p-0 m-0 font-size-2xl align-middle">
+  <header class="m-y-3 flex items-center justify-between line-height-none">
+    <h1 class="m-0 p-0 align-middle font-size-2xl">
       <router-link to="/" class="cursor-pointer">
         {{ title }}
       </router-link>
     </h1>
     <nav class="m-0">
-      <ul class="list-none p-0 m-0 text-gray-500 flex select-none all:transition-100">
-        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
-          <router-link to="/tags" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
+      <ul class="m-0 flex select-none list-none p-0 text-gray-500 all:transition-100">
+        <li class="m-0 h-9 w-9 flex-shrink-0 cursor-pointer p-0">
+          <router-link to="/tags" class="h-100% w-100% flex flex-justify-center flex-items-center rd-100 hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-regular fa-bookmark" />
           </router-link>
         </li>
-        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
-          <router-link to="/about" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
+        <li class="m-0 h-9 w-9 flex-shrink-0 cursor-pointer p-0">
+          <router-link to="/about" class="h-100% w-100% flex flex-justify-center flex-items-center rd-100 hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-solid fa-bullseye" />
           </router-link>
         </li>
-        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
-          <router-link to="/friend" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
+        <li class="m-0 h-9 w-9 flex-shrink-0 cursor-pointer p-0">
+          <router-link to="/friend" class="h-100% w-100% flex flex-justify-center flex-items-center rd-100 hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-solid fa-link" />
           </router-link>
         </li>
-        <li class="p-0 m-0 flex-shrink-0 h-9 w-9 cursor-pointer">
-          <router-link to="/search" class="rd-100 flex h-100% w-100% flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200">
+        <li class="m-0 h-9 w-9 flex-shrink-0 cursor-pointer p-0">
+          <router-link to="/search" class="h-100% w-100% flex flex-justify-center flex-items-center rd-100 hover:text-gray-700 dark:hover:text-gray-200">
             <i class="fa-solid fa-magnifying-glass" />
           </router-link>
         </li>
-        <li class="p-0 m-0 rd-100 flex flex-shrink-0 h-9 w-9 cursor-pointer flex-justify-center flex-items-center hover:text-gray-700 dark:hover:text-gray-200" @click="toggleDark">
+        <li class="m-0 h-9 w-9 flex flex-shrink-0 cursor-pointer flex-justify-center flex-items-center rd-100 p-0 hover:text-gray-700 dark:hover:text-gray-200" @click="toggleDark">
           <i v-if="!isDark" class="fa-solid fa-sun" />
           <i v-else class="fa-solid fa-moon" />
         </li>
