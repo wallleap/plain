@@ -25,13 +25,13 @@ onMounted(async () => {
         <span v-if="friend.labels[0]?.name === '未添加'" class="group position-relative inline-block">
           <span class="position-absolute left--2 top--1 z-10 rounded-full bg-gray-100 px-2 py-0.5 font-size-2.4 text-gray-600 group-hover:translate-y--4 dark:bg-gray-800 dark:text-gray-500">{{ friend.labels[0]?.name }}</span>
           <img class="inline-block h-12 w-12 rounded-full bg-gray-100 group-hover:translate-y--4 dark:bg-gray-800" :src="friend.avatar" :alt="friend.name">
-          <h3 class="position-absolute bottom--2 left-50% z-20 hidden translate-x--50% rounded bg-light-300 px-2 py-0.5 text-nowrap text-nowrap font-size-3 text-gray-600 group-hover:inline dark:bg-dark-300 dark:text-light-200">{{ friend.name }}</h3>
+          <h3 class="position-absolute bottom--2 left-50% z-20 hidden translate-x--50% rounded bg-light-300 px-2 py-0.5 text-nowrap text-nowrap font-size-3 text-gray-600 group-hover:inline-block dark:bg-dark-300 dark:text-light-200">{{ friend.name }}</h3>
         </span>
         <a v-else :href="friend.url" target="_blank" class="group position-relative inline-block">
           <span v-if="friend.labels[0] && friend.labels[0]?.name !== '失联'" class="position-absolute left--2 top--1 z-10 rounded-full bg-blue-100 px-2 py-0.5 font-size-2.4 text-blue-600 group-hover:translate-y--4 dark:bg-blue-gray-800 dark:text-blue-400">{{ friend.labels[0]?.name }}</span>
           <span v-if="friend.labels[0]?.name === '失联'" class="position-absolute left--2 top--1 z-10 rounded-full bg-red-100 px-2 py-0.5 font-size-2.4 text-red-600 group-hover:translate-y--4 dark:bg-red-900 dark:text-red-300">{{ friend.labels[0]?.name }}</span>
           <img class="inline-block h-12 w-12 rounded-full bg-gray-100 group-hover:translate-y--4 group-hover:scale-130" :src="friend.avatar" :alt="friend.name">
-          <h3 class="position-absolute bottom--2 left-50% z-20 hidden translate-x--50% rounded bg-light-300 px-2 py-0.5 text-nowrap text-nowrap font-size-3 text-gray-600 group-hover:inline dark:bg-dark-300 dark:text-light-200">{{ friend.name }}</h3>
+          <h3 class="position-absolute bottom--2 left-50% z-20 hidden translate-x--50% rounded bg-light-300 px-2 py-0.5 text-nowrap text-nowrap font-size-3 text-gray-600 group-hover:inline-block dark:bg-dark-300 dark:text-light-200">{{ friend.name }}</h3>
         </a>
       </li>
     </ul>
