@@ -2,6 +2,7 @@
 export interface Post {
   id: number
   title: string
+  times: number
   summary: string
   body: string
   comments: number

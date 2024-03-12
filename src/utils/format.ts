@@ -78,6 +78,7 @@ export function formatPost(post: Post) {
   const obj = formatBody(body)
   return {
     id,
+    times: 1,
     title: obj.title || title,
     date: obj.date ? formatDate(obj.date) : formatDate(created_at),
     updated: obj.updated ? formatDate(obj.updated) : formatDate(updated_at),

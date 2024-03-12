@@ -19,11 +19,11 @@ function toggleDark() {
 
 <template>
   <header class="m-y-3 flex items-center justify-between line-height-none">
-    <h1 class="m-0 p-0 align-middle font-size-2xl">
-      <router-link to="/" class="cursor-pointer">
+    <router-link to="/" class="cursor-pointer hover:brightness-10 dark:hover:brightness-180">
+      <h1 style="content: url('/logo.svg')" class="m-0 h-6 p-0 align-middle font-size-2xl">
         {{ title }}
-      </router-link>
-    </h1>
+      </h1>
+    </router-link>
     <nav class="m-0">
       <ul class="m-0 flex select-none list-none p-0 text-gray-500 all:transition-100">
         <li class="m-0 h-9 w-9 flex-shrink-0 cursor-pointer p-0">

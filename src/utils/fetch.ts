@@ -22,7 +22,7 @@ export async function fetchWithToken(url: string, options: RequestInit = { ...gh
     return data
   }
   catch (error) {
-    console.error('Error fetching data:', error)
+    console.error('Error occurs at fetch Issues,', error)
     return null
   }
 }

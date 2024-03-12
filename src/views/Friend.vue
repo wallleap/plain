@@ -51,7 +51,7 @@ onMounted(async () => {
       </pre>
     </div>
     <div v-if="utt">
-      <Utterance />
+      <Utterance :utt-script="utt" />
     </div>
   </nav>
 </template>

@@ -15,14 +15,16 @@ interface UTTERANCES_OPTS {
   }
 }
 
+const props = defineProps({
+  uttScript: { type: String, required: true },
+})
 const themeStore = useThemeStore()
-
 // parse utterances code
-const script = import.meta.env.V_UTTERANCES_CODE
+const script = props.uttScript
 const utterancesOpts: UTTERANCES_OPTS = computed(() => {
   const scriptTag = script
   const regex = /(\w+)\s*=\s*["']([^"']+)["']/g
-  const matches = scriptTag.match(regex)
+  const matches = scriptTag?.match(regex)
   const obj = {
     async: false,
     src: 'https://utteranc.es/client.js',

@@ -2,6 +2,10 @@ import { defineConfig, presetUno } from 'unocss'
 
 export default defineConfig({
   rules: [
+    // mask
+    [/^mask-s$/, () => ({
+      '-webkit-mask': 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
+    })],
     // 多行文本超出部分省略号 line-n
     [/^line-(\d+)$/, ([, l]) => {
       if (~~l === 1) {
