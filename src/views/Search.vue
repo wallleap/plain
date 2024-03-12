@@ -17,7 +17,7 @@ async function searchFn() {
 </script>
 
 <template>
-  <div class="line-height-none">
+  <div class="line-height-none slide-enter-1000">
     <form class="position-relative box-border w-100%" @submit.prevent="searchFn">
       <input
         v-model="keyword"
@@ -34,7 +34,7 @@ async function searchFn() {
       <span v-else>输入文字搜索文章</span>
     </p>
     <nav>
-      <ul v-if="posts.length > 0" class="m-0 list-none p-0 text-gray-500 dark:text-gray-400">
+      <ul v-if="posts.length > 0" class="m-0 list-none p-0 text-gray-500 slide-enter-1000 dark:text-gray-400">
         <li v-for="post in posts" :key="post.id" class="group mt-6">
           <router-link :to="{ name: 'post', params: { num: Number(post.num) } }">
             <h2 class="m-0 font-size-5 font-bold group-hover:text-gray-700 dark:group-hover:text-gray-300">

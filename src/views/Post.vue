@@ -55,7 +55,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="min-h-60vh text-gray-600 dark:text-gray-400">
+  <article v-if="post.title" class="min-h-60vh text-gray-600 slide-enter-1000 dark:text-gray-400">
     <h1 class="text-gray-800 dark:text-gray-300">
       {{ post.title }}
     </h1>
@@ -99,4 +99,7 @@ onMounted(async () => {
       </p>
     </div>
   </article>
+  <p v-else class="animate-blink animate-iteration-infinite text-center font-size-4 text-gray-400">
+    文章加载中……
+  </p>
 </template>

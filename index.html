@@ -9,9 +9,54 @@
     <meta name="keywords" content="%V_KEYWORDS%">
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <style>
+        .loading-wrap {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          color: #888;
+        }
+
+        .loading-wrap p {
+          animation: textLoadingAn 1s infinite ease-in-out;
+        }
+        
+        .loading-wrap .loading {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          margin: 3em;
+          display: inline-block;
+          position: relative;
+          vertical-align: middle;
+          background-color: #888;
+          animation: loaderAn 1s infinite ease-in-out;
+        }
+        
+        @keyframes loaderAn {
+          from { transform: scale(0); opacity: 1; }
+          to   { transform: scale(1); opacity: 0; }
+        }
+
+        @keyframes textLoadingAn {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+      </style>
+      <div class="loading-wrap">
+        <div>
+          <p>加载中...</p>
+          <div class="loading"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

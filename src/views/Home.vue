@@ -19,8 +19,8 @@ onMounted(async () => {
 
 <template>
   <div class="home">
-    <main v-if="posts?.length > 0" class="select-none line-height-none">
-      <article v-for="post in posts" :key="post.id" class="group mb-12 cursor-pointer">
+    <main v-if="posts?.length > 0" class="select-none line-height-none slide-enter-1000">
+      <article v-for="post in posts" :key="post.id" v-slide-in class="group mb-12 cursor-pointer">
         <router-link :to="{ name: 'post', params: { num: Number(post.num) } }">
           <div v-if="post.milestone?.title || post.comments > 0" class="m-y-3 flex items-center">
             <span class="mr-3 border-rd bg-gray-100 p-x-2 p-y-1 font-size-3.4 text-gray-400 dark:bg-gray-800 dark:text-gray-600 group-hover:text-gray-500">{{ post.milestone.title }}</span>
@@ -42,8 +42,8 @@ onMounted(async () => {
         </router-link>
       </article>
     </main>
-    <p v-else class="text-center font-size-4 text-gray-400">
-      没有文章~
+    <p v-else class="animate-blink animate-iteration-infinite text-center font-size-4 text-gray-400">
+      文章加载中……
     </p>
   </div>
 </template>

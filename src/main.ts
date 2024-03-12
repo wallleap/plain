@@ -5,6 +5,7 @@ import '@unocss/reset/normalize.css'
 import './fix.css'
 import { createPinia } from 'pinia'
 import AV from 'leancloud-storage'
+import directives from './directives/index'
 import App from './App.vue'
 import router from './router'
 
@@ -17,6 +18,7 @@ AV.init({
 const pinia = createPinia()
 
 const app = createApp(App)
-app.use(router)
+app.use(directives)
+  .use(router)
   .use(pinia)
   .mount('#app')

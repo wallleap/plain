@@ -22,7 +22,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="about-page text-gray-600 dark:text-gray-300">
+  <div class="about-page text-gray-600 slide-enter-1 dark:text-gray-300">
     <MarkdownIt :content="about" />
   </div>
 </template>

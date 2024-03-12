@@ -20,7 +20,7 @@ onMounted(async () => {
 
 <template>
   <nav>
-    <ul class="m-0 flex flex-wrap list-none justify-center gap-4 p-0">
+    <ul class="m-0 flex flex-wrap list-none justify-center gap-4 p-0 slide-enter-800">
       <li v-for="friend in friends" :key="friend.id" class="cursor-pointer select-none" :title="friend.desc">
         <span v-if="friend.labels[0]?.name === '未添加'" class="group position-relative inline-block">
           <span class="position-absolute left--2 top--1 z-10 rounded-full bg-gray-100 px-2 py-0.5 font-size-2.4 text-gray-600 group-hover:translate-y--4 dark:bg-gray-800 dark:text-gray-500">{{ friend.labels[0]?.name }}</span>
@@ -39,7 +39,7 @@ onMounted(async () => {
         </a>
       </li>
     </ul>
-    <div v-if="friends.length" class="font-size-4 text-gray-600 dark:text-gray-400">
+    <div v-if="friends.length" class="font-size-4 text-gray-600 slide-enter-1000 dark:text-gray-400">
       <p>欢迎访问我的博客，希望可以给你带来帮助</p>
       <p>如果需要添加友链，请留言，我会尽快处理</p>
       <p>以下是本站的友链信息：</p>
@@ -50,7 +50,7 @@ onMounted(async () => {
         <code class="text-nowrap">desc: {{ myDesc }}</code>
       </pre>
     </div>
-    <div v-if="utt">
+    <div v-if="utt" class="slide-enter-1200">
       <Utterance :utt-script="utt" />
     </div>
   </nav>
