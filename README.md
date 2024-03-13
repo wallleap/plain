@@ -1,18 +1,32 @@
-# Vue 3 + TypeScript + Vite
+# plain - GitHub Issue API Blog Theme
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This is a Vue 3 composition API based theme for [GitHub Issue API](https://docs.github.com/en/rest). It can help you build a blog with GitHub Issue API.
 
-## Recommended IDE Setup
+![preview-如果图片不显示请复制图片链接后获取仓库和路径前往查看](https://raw.githubusercontent.com/wallleap/imgs/main/plain/plain-mockup.webp)
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## How to use
 
-## Type Support For `.vue` Imports in TS
+1. Clone this repository `git clone https://github.com/wallleap/plain.git` or `git clone git@github.com:wallleap/plain.git`.
+2. Install dependencies `pnpm i`
+3. Run `pnpm dev` to start the development server
+4. Rename `.env.sample` to `.env.local`, and fill in the configuration
+5. Go to GitHub to create 2 repos(`myblogs` and `friends`), then new issues in the 2 repos to generate the blog/friends.
+6. Run `pnpm build` to build the project for production.
+7. Deploy to GitHub Pages/Netlify/Vercel/Your Server etc.
+8. Go to the website and enjoy it.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## Thanks
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+- [Vite](https://vitejs.dev/)
+- [antfu/eslint-config](https://github.com/antfu/eslint-config)
+- [husky](https://github.com/typicode/husky)
+- [lint-staged](https://github.com/okonet/lint-staged)
+- [Vue 3](https://vuejs.org/)
+- [Vue Router](https://router.vuejs.org/)
+- [Pinia](https://pinia.vuejs.org/)
+- [UnoCSS](https://github.com/unocss/unocss)
+- [markdown-it](https://github.com/markdown-it/markdown-it)
+- [front-matter](https://www.npmjs.com/package/front-matter)
+- [highlight.js](https://highlightjs.org/)
+- [LeanCloud Storage](https://docs.leancloud.cn/sdk/storage/guide/setup-js/)
+- [GitHub Issue API](https://docs.github.com/en/rest)
