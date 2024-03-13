@@ -10,7 +10,7 @@ This is a Vue 3 composition API based theme for [GitHub Issue API](https://docs.
 2. Install dependencies `pnpm i`
 3. Run `pnpm dev` to start the development server
 4. Rename `.env.sample` to `.env.local`, and fill in the configuration
-5. Go to GitHub to create 2 repos(`myblogs` and `friends`), then new issues in the 2 repos to generate the blog/friends.
+5. Go to GitHub and create 2 repos(`myblogs` and `friends`), then new issues in the 2 repos to generate the blog/friends.
 6. Run `pnpm build` to build the project for production.
 7. Deploy to GitHub Pages/Netlify/Vercel/Your Server etc.
 8. Go to the website and enjoy it.
