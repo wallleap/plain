@@ -130,8 +130,6 @@ export async function setCounter(post: Post) {
  * 获取阅读量
  * */
 export async function getCounter(ids: number[]) {
-  if (isDev)
-    return {}
   try {
     const query = new AV.Query('Counter')
     query.containedIn('id', ids)
