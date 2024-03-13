@@ -1,4 +1,7 @@
 // 不想引入的
+declare module 'markdown-it-toc-and-anchor' {
+  export default function () {}
+}
 declare module 'markdown-it-sub' {
   export default function () {}
 }

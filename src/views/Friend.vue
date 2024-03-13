@@ -19,7 +19,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <nav>
+  <nav v-if="friends.length > 0">
     <ul class="m-0 flex flex-wrap list-none justify-center gap-4 p-0 slide-enter-800">
       <li v-for="friend in friends" :key="friend.id" class="cursor-pointer select-none" :title="friend.desc">
         <span v-if="friend.labels[0]?.name === '未添加'" class="group position-relative inline-block">
@@ -54,4 +54,7 @@ onMounted(async () => {
       <Utterance :utt-script="utt" />
     </div>
   </nav>
+  <p v-else class="animate-blink animate-iteration-infinite text-center font-size-4 text-gray-400">
+    页面加载中...
+  </p>
 </template>

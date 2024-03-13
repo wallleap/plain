@@ -65,7 +65,7 @@ onMounted(async () => {
       <span>·</span>
       <span v-for="label in post.labels" :key="label.id"><i class="fa-solid fa-hashtag mr-0.6 font-size-3 text-gray-300 dark:text-gray-600" />{{ label.name }}</span>
     </div>
-    <MarkdownIt :content="post.body" />
+    <MarkdownIt :content="post.body" :render-toc="true" />
     <div v-if="post.body">
       <h2 class="text-gray-700 dark:text-gray-300">
         评论
@@ -95,7 +95,7 @@ onMounted(async () => {
         暂时没有评论
       </p>
       <p class="text-gray-400">
-        <a class="group" :href="commentPageUrl" target="_blank"><i class="fa-solid fa-link mr-1 text-gray-300 group-hover:c-primary" />前往 Issue 页面评论</a>
+        <a class="group" :href="commentPageUrl" target="_blank"><i class="fa-solid fa-link mr-1 text-gray-300 dark:text-gray-700 group-hover:c-primary" />前往 Issue 页面评论</a>
       </p>
     </div>
   </article>

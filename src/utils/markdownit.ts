@@ -1,14 +1,15 @@
-import markdownit from 'markdown-it'
-import markdownitsub from 'markdown-it-sub'
-import markdownitsup from 'markdown-it-sup'
-import markdownitins from 'markdown-it-ins'
-import markdownitmark from 'markdown-it-mark'
-import markdownitfootenote from 'markdown-it-footnote'
-import markdownittasklists from 'markdown-it-task-lists'
-import { full as markdownitemoji } from 'markdown-it-emoji'
+import markdownIt from 'markdown-it'
+import markdownItTocAndAnchor from 'markdown-it-toc-and-anchor'
+import markdownItSub from 'markdown-it-sub'
+import markdownItSup from 'markdown-it-sup'
+import markdownItIns from 'markdown-it-ins'
+import markdownItMark from 'markdown-it-mark'
+import markdownItFootNote from 'markdown-it-footnote'
+import markdownItTasklists from 'markdown-it-task-lists'
+import { full as markdownItEmoji } from 'markdown-it-emoji'
 import hljs from 'highlight.js'
 
-export const md = markdownit({
+export const md = markdownIt({
   html: true,
   linkify: true,
   typographer: true,
@@ -22,13 +23,13 @@ export const md = markdownit({
       }
       catch (__) {}
     }
-
     return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>`
   },
-}).use(markdownitsub)
-  .use(markdownitsup)
-  .use(markdownitins)
-  .use(markdownitmark)
-  .use(markdownitfootenote)
-  .use(markdownittasklists)
-  .use(markdownitemoji)
+}).use(markdownItTocAndAnchor)
+  .use(markdownItSub)
+  .use(markdownItSup)
+  .use(markdownItIns)
+  .use(markdownItMark)
+  .use(markdownItFootNote)
+  .use(markdownItTasklists)
+  .use(markdownItEmoji)

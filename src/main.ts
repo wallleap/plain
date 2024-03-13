@@ -2,12 +2,12 @@ import { createApp } from 'vue'
 import './style.css'
 import 'virtual:uno.css'
 import '@unocss/reset/normalize.css'
-import './fix.css'
 import { createPinia } from 'pinia'
 import AV from 'leancloud-storage'
 import directives from './directives/index'
 import App from './App.vue'
 import router from './router'
+import './fix.css'
 
 AV.init({
   appId: import.meta.env.V_LEANCLOUD_ID,
