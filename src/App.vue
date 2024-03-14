@@ -48,7 +48,7 @@ onMounted(async () => {
   const referrer = document.createElement('a')
   referrer.href = document.referrer
   const hostname = (referrer.hostname
-    && (referrer.port !== '80' && referrer.port !== '443'))
+    && (referrer.port !== '80' && referrer.port !== '443' && referrer.port !== ''))
     ? `${referrer.hostname}:${referrer.port}`
     : (referrer.hostname || '直接访问')
   const ua = navigator.userAgent
