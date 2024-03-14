@@ -30,3 +30,7 @@ This is a Vue 3 composition API based theme for [GitHub Issue API](https://docs.
 - [highlight.js](https://highlightjs.org/)
 - [LeanCloud Storage](https://docs.leancloud.cn/sdk/storage/guide/setup-js/)
 - [GitHub Issue API](https://docs.github.com/en/rest)
+
+## License
+
+[MIT](https://github.com/wallleap/plain/blob/main/LICENSE)
