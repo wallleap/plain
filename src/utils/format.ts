@@ -98,28 +98,38 @@ export function formatPost(post: Post) {
 interface Friend {
   id: number
   body: string
-  labels: string[]
+  labels: {
+    color: string
+    name: string
+  }[]
 }
 export function formatFriend(friend: Friend) {
-  const { id, body, labels } = friend
+  const { body, labels } = friend
   const regex = /^name:\s(.*)\r\nurl:\s(.*)\r\navatar:\s(.*)\r\ndesc:\s(.*)$/
   if (!regex.test(body)) {
     return {
-      id,
       name: '',
       url: '#',
       avatar: '',
       desc: '',
-      labels,
+      tag: {
+        name: labels?.[0].name || '',
+        color: '',
+        bg: '',
+      },
     }
   }
   const result = regex.exec(body)
+  const labelName = labels ? labels[0] ? labels[0].name : '' : ''
   return {
-    id,
     name: result?.slice(1)[0],
     url: result?.slice(1)[1],
     avatar: result?.slice(1)[2],
     desc: result?.slice(1)[3],
-    labels,
+    tag: {
+      name: labelName,
+      color: '',
+      bg: '',
+    },
   }
 }

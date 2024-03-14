@@ -7,7 +7,7 @@ const keyword = ref('')
 const posts: Post[] = reactive([])
 
 async function searchFn() {
-  const searchRes = await searchPosts({ keyword: keyword.value, pageSize: 10000 })
+  const searchRes = await searchPosts({ keyword: keyword.value })
   Object.assign(posts, searchRes.posts)
   posts.forEach((post) => {
     post.summary = `...${post.body.substring(post.body.search(keyword.value) - 40, post.body.indexOf(keyword.value) + keyword.value.length + 40)}...`

@@ -15,7 +15,7 @@ export const usePostsStore = defineStore('posts', () => {
   })
   async function getPostsAction() {
     try {
-      const res = await searchPosts({ keyword: '', page: 1, pageSize: 1000 })
+      const res = await searchPosts({ keyword: '' })
       const ids = res.posts.map((post: Post) => post.id)
       const times = await getCounter(ids)
       if (times) {

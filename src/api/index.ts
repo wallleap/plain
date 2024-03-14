@@ -1,14 +1,16 @@
 import AV from 'leancloud-storage'
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
-import type { Post, Tag } from '../types/index'
+import type { Friend, Post, Tag } from '../types/index'
 
 const isDev = /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|::1|127\.0\.0\.1|localhost)/.test(window.location.host)
 const USERNAME: string = import.meta.env.V_USERNAME
 const REPO: string = import.meta.env.V_REPOSITORY
 const FR_REPO: string = import.meta.env.V_FRIENDS_REPO
-if (!USERNAME || !REPO || !FR_REPO)
-  throw new Error('V_USERNAME, V_REPOSITORY, V_FRIENDS_REPO must be set')
+const BLOG_PER_PAGE = import.meta.env.V_BLOG_COUNT || 100
+const FRIEND_PER_PAGE = import.meta.env.V_FRIEND_COUNT || 100
+if (!USERNAME || !REPO)
+  throw new Error('V_USERNAME, V_REPOSITORY must be set')
 
 // API 链接拼接
 const BLOG_PREFIX = `/repos/${USERNAME}/${REPO}`
@@ -17,7 +19,7 @@ const FR_PREFIX = `/repos/${USERNAME}/${FR_REPO}`
 /*
  * 获取博客列表
  * */
-export async function getPosts({ page = 1, pageSize = 30 }) {
+export async function getPosts({ page = 1, pageSize = BLOG_PER_PAGE }) {
   const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=open&page=${page}&per_page=${pageSize}`)
   return res.map(formatPost)
 }
@@ -25,15 +27,33 @@ export async function getPosts({ page = 1, pageSize = 30 }) {
 /*
  * 获取友链列表
  * */
-export async function getFriends({ page = 1, pageSize = 100000 }) {
+export async function getFriends({ page = 1, pageSize = FRIEND_PER_PAGE }) {
   const res = await fetchWithToken(`${FR_PREFIX}/issues?state=closed&page=${page}&per_page=${pageSize}&direction=asc`)
   return res.map(formatFriend)
+}
+
+interface Fr {
+  body: string
+}
+export async function getFriendsByComments() {
+  const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=closed&labels=Friend`)
+  if (!res?.length)
+    return []
+  const commentsUrl = res[0].comments_url
+  const jsonReg = /\{\r\n\s{2}\"name\":\s\"[^"\n\r]+\",\r\n\s{2}\"url\":\s\"[^"\s\n\r]+\",\r\n\s{2}\"avatar\":\s\"[^"\s\n\r]+\",\r\n\s{2}\"desc\":\s\"[^"\n\r]+\",\r\n\s{2}\"tag\":\s\{\r\n\s{4}\"name\":\s\"[^"\n\r]*\",\r\n\s{4}\"color\":\s\"[^"\n\r]*\",\r\n\s{4}\"bg\":\s\"[^"\n\r]*\"\r\n\s{2}\}\r\n\}/
+  const friendRes = await fetchWithToken(`${commentsUrl}?page=1&per_page=${FRIEND_PER_PAGE}`)
+  const friends: Friend[] = []
+  friendRes.forEach((fr: Fr) => {
+    if (jsonReg.test(fr.body))
+      friends.push(JSON.parse(fr.body))
+  })
+  return friends
 }
 
 /*
  * 搜索
  * */
-export async function searchPosts({ keyword = '', page = 1, pageSize = 30 }) {
+export async function searchPosts({ keyword = '', page = 1, pageSize = BLOG_PER_PAGE }) {
   const res = await fetchWithToken(`/search/issues?q=${keyword}+repo:${USERNAME}/${REPO}+type:issue+state:open&page=${page}&per_page=${pageSize}`)
   const posts = res?.items.map(formatPost)
   return {
@@ -83,7 +103,7 @@ export async function getAbout() {
 }
 
 /*
- * 获取关于页面
+ * 获取通知
  * */
 export async function getNotice() {
   const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=closed&labels=Notice`)

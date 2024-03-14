@@ -22,15 +22,15 @@ export interface Post {
 
 // Friend
 export interface Friend {
-  id: number
   name: string
   avatar: string
   url: string
   desc: string
-  labels: {
-    id: number
+  tag: {
     name: string
-  }[]
+    color: string
+    bg: string
+  }
 }
 
 // Tag
