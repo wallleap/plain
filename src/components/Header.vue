@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useThemeStore } from '../stores/theme'
+import logo from '/logo.svg?raw'
 
-const title = import.meta.env.V_TITLE
 const isDark = ref(false)
 const themeStore = useThemeStore()
 
@@ -19,11 +19,9 @@ function toggleDark() {
 
 <template>
   <header class="m-y-3 flex items-center justify-between line-height-none">
-    <router-link to="/" class="cursor-pointer hover:brightness-10 dark:hover:brightness-180">
-      <h1 style="content: url('/logo.svg')" class="m-0 h-6 p-0 align-middle font-size-2xl">
-        {{ title }}
-      </h1>
-    </router-link>
+    <a href="/" class="inline-block h-6 w-6 cursor-pointer hover:brightness-10 dark:hover:brightness-180">
+      <h1 class="m-0 h-100% p-0 align-middle font-size-2xl" v-html="logo" />
+    </a>
     <nav class="m-0">
       <ul class="m-0 flex select-none list-none p-0 text-gray-500 all:transition-100">
         <li class="m-0 h-9 w-9 flex-shrink-0 cursor-pointer p-0">

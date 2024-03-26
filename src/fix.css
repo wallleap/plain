@@ -2,6 +2,14 @@ p {
   overflow-wrap: break-word;
 }
 
+p > code {
+  overflow-wrap: break-word;
+}
+
+li > code {
+  overflow-wrap: break-word;
+}
+
 img {
   max-width: 100%;
   border-radius: .25rem;
@@ -236,4 +244,8 @@ table th {
 
 #toc-wrapper li > a + ul {
   margin-top: .5rem;
+}
+
+h1 svg {
+  height: 100%;
 }
