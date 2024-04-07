@@ -82,7 +82,7 @@ export async function getComments({ url = '' }) {
  * 获取文章标签
  * */
 export async function getTags() {
-  const filterLabel = ['Inspiration', 'Friend', 'Book', 'About']
+  const filterLabel = ['Notice', 'Inspiration', 'Friend', 'Book', 'About']
   const res: Tag[] = await fetchWithToken(`${BLOG_PREFIX}/labels?page=1&per_page=1000`)
   const resFilter = res.filter(item => !filterLabel.includes(item.name))
   const tags = resFilter.map(item => ({
