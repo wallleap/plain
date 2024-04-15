@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { onMounted, onUnmounted, reactive } from 'vue'
 import { getFriends, getFriendsByComments } from '../api'
 import Utterance from '../components/Utterance.vue'
 import type { Friend } from '../types'
@@ -19,6 +19,10 @@ onMounted(async () => {
     Object.assign(friends, await getFriends({}))
   else
     Object.assign(friends, await getFriendsByComments())
+})
+
+onUnmounted(() => {
+  document.title = import.meta.env.V_TITLE
 })
 </script>
 

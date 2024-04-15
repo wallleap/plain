@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watchEffect } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { getComments, getPost, setCounter } from '../api/index'
 import { formatDate } from '../utils/format'
@@ -44,13 +44,24 @@ watchEffect(async () => {
 })
 
 onMounted(async () => {
-  Object.assign(post, await getPost({ number: Number(route.params.num) }))
-  await setCounter(post)
-  commentPageUrl.value = post.comments_url.replace('comments', '')
-    .replace('api.', '')
-    .replace('repos/', '')
-  if (post.comments > 0)
-    comments.push(...await getComments({ url: post.comments_url }))
+  try {
+    Object.assign(post, await getPost({ number: Number(route.params.num) }))
+    await setCounter(post)
+    if (post.title)
+      document.title = `${post.title} - ${import.meta.env.V_TITLE}`
+    commentPageUrl.value = post.comments_url.replace('comments', '')
+      .replace('api.', '')
+      .replace('repos/', '')
+    if (post.comments > 0)
+      comments.push(...await getComments({ url: post.comments_url }))
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+onUnmounted(() => {
+  document.title = import.meta.env.V_TITLE
 })
 </script>
 
