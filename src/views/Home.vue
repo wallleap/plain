@@ -39,7 +39,7 @@ useInfiniteScroll(
   document,
   async () => {
     isLoadingMore.value = true
-    const res = await moreData(++curPage.value)
+    const res = await moreData(curPage.value++)
     if (res.length === 0) {
       isLoadingMore.value = false
       noMore.value = true
