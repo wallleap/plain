@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { onMounted, reactive, watchEffect } from 'vue'
-import { getTags } from '../api/index'
-import { usePostsStore } from '../stores/posts'
+import { getTags, searchPosts } from '../api/index'
 import type { Post, Tag } from '../types/index'
 
-const postsStore = usePostsStore()
 const tags: Tag[] = reactive([])
 const posts: Post[] = reactive([])
 const showPosts: Post[] = reactive([])
 
 onMounted(async () => {
-  tags.push(...await getTags())
-  if (postsStore.postsRes.total_count === 0)
-    postsStore.getPostsAction()
+  try {
+    tags.push(...await getTags())
+    const res = await searchPosts({ keyword: '' })
+    Object.assign(posts, res.posts)
+  }
+  catch (error) {
+    console.error('Error fetching data:', error)
+  }
 })
 
 watchEffect(() => {
-  Object.assign(posts, postsStore.postsRes.posts)
   tags.forEach((tag) => {
     tag.count = posts.filter(post => post.labels.some(label => label.id === tag.id)).length
   })

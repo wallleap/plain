@@ -1,20 +1,57 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
-import { usePostsStore } from '../stores/posts'
+import { reactive, ref } from 'vue'
+import { useInfiniteScroll } from '@vueuse/core'
+import { getCounter, getPosts } from '../api'
 import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
 
 const posts: Post[] = reactive([])
-const postsStore = usePostsStore()
+const curPage = ref(1)
+// 没有更多文章，用于取消监听触底
+const noMore = ref(false)
+// 触底后正在加载中
+const isLoadingMore = ref(false)
 
-/*
- * 获取文章列表
- * */
-onMounted(async () => {
-  if (postsStore.postsRes.total_count === 0)
-    await postsStore.getPostsAction()
-  posts.push(...postsStore.postsRes.posts)
-})
+async function moreData(curPage: number) {
+  try {
+    const res = await getPosts({ page: curPage, pageSize: 12 })
+    const ids = res.map((post: Post) => post.id)
+    const times = res.length > 0
+      ? await getCounter(ids) as { [key: string]: number }
+      : {}
+    if (times) {
+      res.forEach((post: Post) => {
+        post.times = times[post.id] || 1
+      })
+    }
+    else {
+      console.error('getCounter failed')
+    }
+    return res
+  }
+  catch (error) {
+    console.error('Error fetching data:', error)
+    return []
+  }
+}
+
+useInfiniteScroll(
+  document,
+  async () => {
+    isLoadingMore.value = true
+    const res = await moreData(++curPage.value)
+    if (res.length === 0) {
+      isLoadingMore.value = false
+      noMore.value = true
+      return
+    }
+    posts.push(...res)
+  },
+  {
+    distance: 10,
+    canLoadMore: () => !noMore.value,
+  },
+)
 </script>
 
 <template>
@@ -41,6 +78,9 @@ onMounted(async () => {
           </p>
         </router-link>
       </article>
+      <p v-if="isLoadingMore" class="text-center">
+        <i class="fa-solid fa-circle-notch fa-spin text-gray-400" />
+      </p>
     </main>
     <p v-else class="animate-blink animate-iteration-infinite text-center font-size-4 text-gray-400">
       文章加载中……
