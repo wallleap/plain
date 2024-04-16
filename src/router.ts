@@ -1,5 +1,6 @@
+// createWebHistory createWebHashHistory
+import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHistory } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -33,9 +34,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('./views/Post.vue'),
   },
 ]
-
 export default createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
   scrollBehavior() { // to, from, savedPosition
     return { top: 0 }

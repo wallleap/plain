@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { getComments, getPost, setCounter } from '../api/index'
 import { formatDate } from '../utils/format'
@@ -32,6 +32,26 @@ const commentPageUrl = ref('')
 const cTheme = ref('light')
 const themeStore = useThemeStore()
 
+function scrollToAnchor(anchorId: string) {
+  const element = document.getElementById(decodeURIComponent(anchorId))
+  if (element)
+    element.scrollIntoView({ behavior: 'instant', block: 'start' })
+}
+
+function navLinkAnchor() {
+  const tocWrapper = document.querySelector('#toc-wrapper')
+  const linkAnchors = tocWrapper?.querySelectorAll('a')
+  if (linkAnchors) {
+    linkAnchors.forEach((linkAnchor) => {
+      linkAnchor.addEventListener('click', (e) => {
+        e.preventDefault()
+        const anchorId = linkAnchor.getAttribute('href') || ''
+        scrollToAnchor(anchorId?.slice(1))
+      })
+    })
+  }
+}
+
 watchEffect(async () => {
   cTheme.value = themeStore.curTheme
   const innerCode = cTheme.value === 'light' ? lightCSS : darkCSS
@@ -46,7 +66,7 @@ watchEffect(async () => {
 onMounted(async () => {
   try {
     Object.assign(post, await getPost({ number: Number(route.params.num) }))
-    await setCounter(post)
+    setCounter(post)
     if (post.title)
       document.title = `${post.title} - ${import.meta.env.V_TITLE}`
     commentPageUrl.value = post.comments_url.replace('comments', '')
@@ -54,6 +74,10 @@ onMounted(async () => {
       .replace('repos/', '')
     if (post.comments > 0)
       comments.push(...await getComments({ url: post.comments_url }))
+    await nextTick()
+    if (route.hash && post.body)
+      scrollToAnchor(route.hash.slice(1))
+    navLinkAnchor()
   }
   catch (error) {
     console.error(error)
