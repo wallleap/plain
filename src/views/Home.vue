@@ -6,27 +6,17 @@ import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
 
 const posts: Post[] = reactive([])
-const curPage = ref(1)
-// 没有更多文章，用于取消监听触底
-const noMore = ref(false)
-// 触底后正在加载中
-const isLoadingMore = ref(false)
+let curPage = 1 // 当前页码，不需要响应式
+const noMore = ref(false) // 没有更多文章，用于取消监听触底
 
-async function moreData(curPage: number) {
+/**
+ * 获取更多文章
+ * @param currentPage 当前页码
+ * @returns 文章列表
+ */
+async function moreData(currentPage: number) {
   try {
-    const res = await getPosts({ page: curPage, pageSize: 12 })
-    const ids = res.map((post: Post) => post.id)
-    const times = res.length > 0
-      ? await getCounter(ids) as { [key: string]: number }
-      : {}
-    if (times) {
-      res.forEach((post: Post) => {
-        post.times = times[post.id] || 1
-      })
-    }
-    else {
-      console.error('getCounter failed')
-    }
+    const res = await getPosts({ page: currentPage, pageSize: 12 })
     return res
   }
   catch (error) {
@@ -35,20 +25,47 @@ async function moreData(curPage: number) {
   }
 }
 
+/**
+ * 设置文章浏览次数
+ * 使用到了上面的变量 posts
+ */
+async function setPostTimes() {
+  try {
+    const ids = posts.map((post: Post) => post.id)
+    const times = posts.length > 0
+      ? await getCounter(ids) as { [key: string]: number }
+      : {}
+    if (times) {
+      posts.forEach((post: Post) => {
+        post.times = times[post.id] || 1
+      })
+    }
+    else {
+      console.error('getCounter failed')
+    }
+  }
+  catch (error) {
+    console.error('Error fetching data:', error)
+  }
+}
+
+/**
+ * 监听滚动事件，触底时加载更多文章
+ */
 useInfiniteScroll(
   document,
   async () => {
-    isLoadingMore.value = true
-    const res = await moreData(curPage.value++)
+    const res = await moreData(curPage++)
+    // 没有更多数据
     if (res.length === 0) {
-      isLoadingMore.value = false
       noMore.value = true
       return
     }
     posts.push(...res)
+    setPostTimes()
   },
   {
-    distance: 10,
+    distance: 120,
     canLoadMore: () => !noMore.value,
   },
 )
@@ -78,8 +95,11 @@ useInfiniteScroll(
           </p>
         </router-link>
       </article>
-      <p v-if="isLoadingMore" class="text-center">
+      <p v-if="!noMore" v-slide-in class="text-center">
         <i class="fa-solid fa-circle-notch fa-spin text-gray-400" />
+      </p>
+      <p v-else class="text-center text-gray-400">
+        没有更多文章了~
       </p>
     </main>
     <p v-else class="animate-blink animate-iteration-infinite text-center font-size-4 text-gray-400">
