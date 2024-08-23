@@ -1,4 +1,4 @@
-import { defineConfig, presetUno } from 'unocss'
+import { defineConfig, presetIcons, presetUno } from 'unocss'
 
 export default defineConfig({
   rules: [
@@ -64,5 +64,24 @@ export default defineConfig({
         dark: '[data-theme=dark]',
       },
     }),
+    presetIcons({
+      scale: 1.2,
+      extraProperties: {
+        'display': 'inline-block',
+        'vertical-align': '-0.2em',
+      },
+    }),
   ],
+  content: {
+    pipeline: {
+      include: [
+        // the default
+        /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
+        // 参考：https://unocss.dev/guide/extracting#extracting-from-build-tools-pipeline
+        'src/utils/config.ts',
+      ],
+      // exclude files
+      // exclude: []
+    },
+  },
 })

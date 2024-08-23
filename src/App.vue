@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref } from 'vue'
 import Header from './components/Header.vue'
 import Copyright from './components/Copyright.vue'
 import BackToTop from './components/BackToTop.vue'
@@ -10,39 +10,6 @@ const notice = ref({
   color: 'rgba(255, 255, 255, 0.8)',
 })
 const noticeRef = ref<HTMLElement | null>(null)
-
-function startHorizontalScroll(element: HTMLElement) {
-  const GAP = 3
-  const parentElement = element.parentNode as Element
-  const parentWidth = parentElement ? parentElement.getBoundingClientRect().width : window.innerWidth
-  const textWidth = element.getBoundingClientRect().width
-
-  function animateScroll(element: HTMLElement, scrollX: number) {
-    const duration = scrollX / 50
-
-    element.animate(
-      [
-        { transform: `translateX(0px)` },
-        { transform: `translateX(-${scrollX}px)` },
-      ],
-      {
-        duration: duration * 1000,
-        iterations: Number.POSITIVE_INFINITY,
-      },
-    )
-  }
-
-  if (textWidth > parentWidth) {
-    const cloneElement = element.cloneNode(true) as HTMLElement
-    const scrollX = textWidth + GAP * Number.parseFloat(window.getComputedStyle(parentElement).fontSize)
-    parentElement.appendChild(cloneElement)
-    if (parentElement instanceof HTMLElement)
-      parentElement.style.gap = `${GAP}em`
-
-    animateScroll(element, scrollX)
-    animateScroll(cloneElement, scrollX)
-  }
-}
 
 onMounted(async () => {
   const referrer = document.createElement('a')
@@ -67,14 +34,6 @@ onMounted(async () => {
     return null
   }
   await recordVisit({ referrer: hostname, ua, ip })
-})
-
-watchEffect(() => {
-  if (noticeRef.value) {
-    const ChildEl = noticeRef.value.querySelector('p')
-    if (ChildEl)
-      startHorizontalScroll(ChildEl)
-  }
 })
 </script>
 

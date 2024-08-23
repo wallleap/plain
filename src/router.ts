@@ -1,5 +1,5 @@
 // createWebHistory createWebHashHistory
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
@@ -14,9 +14,9 @@ const routes: RouteRecordRaw[] = [
     component: () => import('./views/Tags.vue'),
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('./views/About.vue'),
+    path: '/posts',
+    name: 'posts',
+    component: () => import('./views/Posts.vue'),
   },
   {
     path: '/friend',
@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
   },
 ]
 export default createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
   scrollBehavior() { // to, from, savedPosition
     return { top: 0 }

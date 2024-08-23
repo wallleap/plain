@@ -23,3 +23,18 @@ declare module 'markdown-it-task-lists' {
 declare module 'markdown-it-emoji' {
   export const full
 }
+
+declare module 'vue3-seamless-scroll' {
+  export const Vue3SeamlessScroll: import('vue').DefineComponent < OptionsType, OptionsType, OptionsType, OptionsType, OptionsType, OptionsType, OptionsType, OptionsType, OptionsType, OptionsType, OptionsType, OptionsType >
+
+  const install: (app: import('vue').App, options: {
+    name: string
+  }) => unknown
+  export default install
+}
+
+interface Document {
+  startViewTransition: (
+    callback: () => void
+  ) => ready
+}

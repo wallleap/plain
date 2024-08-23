@@ -4,6 +4,15 @@
   ],
   "hints": {
     "typescript-config/is-valid": "off",
-    "meta-viewport": "off"
+    "meta-viewport": "off",
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "font-synthesis",
+          "text-decoration-thickness"
+        ]
+      }
+    ]
   }
 }

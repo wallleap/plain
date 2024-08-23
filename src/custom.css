@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap");
+
 p {
   overflow-wrap: break-word;
 }
@@ -23,7 +25,7 @@ a {
   color: rgb(156 163 175);
 }
 
-s {
+s, del {
   color: rgb(156 163 175);
   text-decoration-color:rgb(190 190 190);
   text-decoration-thickness: 1px;
@@ -159,6 +161,18 @@ table th {
 .about-page ul a:hover::before, .about-page p a:hover::before, .markdown-body p a:hover::before {
   color: var(--primary);
   animation: shake 0.82s cubic-bezier(.36, .07, .19, .97);
+}
+
+.main-text {
+  position: relative;
+  display: inline-block;
+  text-wrap: nowrap;
+  font-family: "Archivo Black", sans-serif;
+  background: linear-gradient(45deg, var(--primary), #ff9513);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: rgba(240, 91, 46, 0.2) 2px 2px;
 }
 
 .markdown-body h1,
