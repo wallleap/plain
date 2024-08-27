@@ -2,6 +2,7 @@
 import { nextTick, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { getComments, getPost, setCounter } from '../api/index'
+import { debounce } from '../utils/index'
 import { formatDate } from '../utils/format'
 import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
@@ -38,18 +39,64 @@ function scrollToAnchor(anchorId: string) {
     element.scrollIntoView({ behavior: 'instant', block: 'start' })
 }
 
-function navLinkAnchor() {
+function activeAnchor(currentAnchor: HTMLElement) {
   const tocWrapper = document.querySelector('#toc-wrapper')
   const linkAnchors = tocWrapper?.querySelectorAll('a')
   if (linkAnchors) {
     linkAnchors.forEach((linkAnchor) => {
+      linkAnchor.classList.remove('active')
+    })
+    currentAnchor.classList.add('active')
+  }
+}
+
+function navLinkAnchor() {
+  const tocWrapper = document.querySelector('#toc-wrapper')
+  const linkAnchors = tocWrapper!.querySelectorAll('a')
+  const titles: HTMLElement[] = []
+  if (linkAnchors) {
+    linkAnchors.forEach((linkAnchor) => {
+      const anchorId = linkAnchor.getAttribute('href') || ''
+      const title = document.getElementById(decodeURIComponent(anchorId?.slice(1)))
+      if (title)
+        titles.push(title)
+      if (location.hash === linkAnchor.getAttribute('href')) {
+        activeAnchor(linkAnchor)
+        scrollToAnchor(anchorId?.slice(1))
+      }
+      else {
+        activeAnchor(linkAnchors[0])
+      }
       linkAnchor.addEventListener('click', (e) => {
         e.preventDefault()
+        activeAnchor(linkAnchor)
         const anchorId = linkAnchor.getAttribute('href') || ''
         scrollToAnchor(anchorId?.slice(1))
       })
     })
   }
+  window.addEventListener('scroll', debounce(() => {
+    const range = [0, 300]
+    const screenHeight = document.documentElement.clientHeight
+    const rects = titles.map(title => title.getBoundingClientRect())
+    for (let i = 0; i < titles.length; i++) {
+      const rect = rects[i]
+      const isInRange = rect.top >= range[0] && rect.top <= range[1]
+      const isOutViewport = rect.top < range[0] && rects[i + 1] && (rects[i + 1].top >= screenHeight || rects[i + 1].top >= range[1])
+      if (isInRange || isOutViewport) {
+        activeAnchor(linkAnchors[i])
+        break
+      }
+      if (rects[0].top >= screenHeight || rects[0].top >= range[1]) {
+        activeAnchor(linkAnchors[0])
+        break
+      }
+      if (rects[titles.length - 1].top <= range[0]) {
+        activeAnchor(linkAnchors[titles.length - 1])
+        break
+      }
+    }
+  }, 100))
 }
 
 watchEffect(async () => {

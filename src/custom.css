@@ -231,6 +231,24 @@ table th {
   transition: all .2s ease-in-out;
 }
 
+#toc-wrapper a.active {
+  color: #ff9513;
+  border-left: 2px solid currentColor;
+}
+
+#toc-wrapper ul, #toc-wrapper li {
+  margin: 0;
+  padding: 0;
+}
+
+#toc-wrapper li a {
+  padding-left: .8rem;
+}
+
+#toc-wrapper li a + ul a {
+  padding-left: 1.6rem;
+}
+
 @media screen and (max-width: 930px) {
   #toc-wrapper {
     left: calc(50vw + 650px / 2  + 1rem);
@@ -254,10 +272,6 @@ table th {
 
 #toc-wrapper li:last-of-type {
   margin-bottom: 0;
-}
-
-#toc-wrapper li > a + ul {
-  margin-top: .5rem;
 }
 
 h1 svg {
