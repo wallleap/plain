@@ -246,7 +246,15 @@ table th {
 }
 
 #toc-wrapper li a + ul a {
-  padding-left: 1.6rem;
+  padding-left: calc(0.8rem * 2);
+}
+
+#toc-wrapper li a + ul li a + ul a {
+  padding-left: calc(0.8rem * 3);
+}
+
+#toc-wrapper li a + ul li a + ul li a + ul a {
+  padding-left: calc(0.8rem * 4);
 }
 
 @media screen and (max-width: 930px) {
