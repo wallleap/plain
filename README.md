@@ -15,6 +15,11 @@ This is a Vue 3 composition API based theme for [GitHub Issue API](https://docs.
 7. Deploy to GitHub Pages/Netlify/Vercel/Your Server etc.
 8. Go to the website and enjoy it.
 
+> How to configure Home Page
+>
+> Change file `src/utils/config.ts` to configure typing strings and skills.
+> New Issue with label `About` and close it.
+
 ## Thanks
 
 - [Vite](https://vitejs.dev/)
