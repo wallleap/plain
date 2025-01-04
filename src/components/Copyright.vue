@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const createdAt = new Date(import.meta.env.V_CREATED_TIME).getFullYear()
-const dateStr = `${createdAt} - ${new Date().getFullYear()}`
+const createStr = import.meta.env.V_CREATED_TIME || new Date().toString()
+const createdAt = new Date(createStr).getFullYear()
+const dateStr = createdAt !== (new Date()).getFullYear() ? `${createdAt} - ${new Date().getFullYear()}` : createdAt
 const myLink = import.meta.env.V_LINK
 const myName = import.meta.env.V_AUTHOR
 const myTitle = import.meta.env.V_TITLE
@@ -40,10 +41,12 @@ const beianLink = import.meta.env.V_BEIAN_LINK
         </span>
       </p>
       <p class="mb-6 mt-2 align-middle text-gray-400">
-        <a v-if="myLink && myName" :href="myUrl" class="text-gray-300 dark:text-gray-500 dark:hover:c-primary">{{ myTitle }},</a>
+        <a v-if="myUrl && myTitle" :href="myUrl" class="text-gray-300 dark:text-gray-500 dark:hover:c-primary">{{ myTitle }},</a>
         <span class="mx-1">{{ dateStr }}</span>
-        <span class="mx-1">&copy; Powered by</span>
-        <a v-if="myLink && myName" :href="myLink" class="text-gray-300 dark:text-gray-500 dark:hover:c-primary">{{ myName }}</a>
+        <span v-if="myLink && myName">
+          <span class="mx-1">&copy; Powered by</span>
+          <a :href="myLink" class="text-gray-300 dark:text-gray-500 dark:hover:c-primary">{{ myName }}</a>
+        </span>
       </p>
     </div>
   </footer>

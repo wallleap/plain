@@ -1,5 +1,16 @@
+import { createNotify } from '../services/notifyService'
+
 const tempToken: string = import.meta.env.V_GITHUB_TOKEN
-const GH_TOKEN = tempToken.split(', ').join('')
+
+if (!tempToken) {
+  createNotify({
+    message: '必须配置 GitHub Token',
+    type: 'error',
+    duration: 8000,
+  })
+}
+
+const GH_TOKEN = tempToken?.split(', ')?.join('')
 const GH_API = 'https://api.github.com'
 const ghOpt = {
   method: 'GET',

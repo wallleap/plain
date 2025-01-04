@@ -2,6 +2,7 @@ import AV from 'leancloud-storage'
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
 import type { Friend, Post, Tag } from '../types/index'
+import { createNotify } from '../services/notifyService'
 
 const isDev = /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|::1|127\.0\.0\.1|localhost)/.test(window.location.host)
 const USERNAME: string = import.meta.env.V_USERNAME
@@ -9,8 +10,14 @@ const REPO: string = import.meta.env.V_REPOSITORY
 const FR_REPO: string = import.meta.env.V_FRIENDS_REPO
 const BLOG_PER_PAGE = import.meta.env.V_BLOG_COUNT || 100
 const FRIEND_PER_PAGE = import.meta.env.V_FRIEND_COUNT || 100
-if (!USERNAME || !REPO)
+if (!USERNAME || !REPO) {
+  createNotify({
+    message: 'V_USERNAME 和 V_REPOSITORY 没有配置',
+    type: 'error',
+    duration: 6000,
+  })
   throw new Error('V_USERNAME, V_REPOSITORY must be set')
+}
 
 // API 链接拼接
 const BLOG_PREFIX = `/repos/${USERNAME}/${REPO}`
