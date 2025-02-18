@@ -1,6 +1,7 @@
 import AV from 'leancloud-storage'
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
+import { isSpecificJSONFormat } from '../utils'
 import type { Friend, Post, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
@@ -47,12 +48,13 @@ export async function getFriendsByComments() {
   if (!res?.length)
     return []
   const commentsUrl = res[0].comments_url
-  const jsonReg = /\{\r\n\s{2}\"name\":\s\"[^"\n\r]+\",\r\n\s{2}\"url\":\s\"[^"\s\n\r]+\",\r\n\s{2}\"avatar\":\s\"[^"\s\n\r]+\",\r\n\s{2}\"desc\":\s\"[^"\n\r]+\",\r\n\s{2}\"tag\":\s\{\r\n\s{4}\"name\":\s\"[^"\n\r]*\",\r\n\s{4}\"color\":\s\"[^"\n\r]*\",\r\n\s{4}\"bg\":\s\"[^"\n\r]*\"\r\n\s{2}\}\r\n\}/
   const friendRes = await fetchWithToken(`${commentsUrl}?page=1&per_page=${FRIEND_PER_PAGE}`)
   const friends: Friend[] = []
   friendRes.forEach((fr: Fr) => {
-    if (jsonReg.test(fr.body))
-      friends.push(JSON.parse(fr.body))
+    if (isSpecificJSONFormat(fr.body)) {
+      const friend = JSON.parse(fr.body)
+      friends.push(friend)
+    }
   })
   return friends
 }

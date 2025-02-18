@@ -78,3 +78,41 @@ export function hexToHSL(hex: string) {
 
   return [h * 360, s * 100, l * 100]
 }
+
+/**
+ * 检测是否是一个有效的友链 JSON 字符串
+ * @returns true or false
+ */
+export function isSpecificJSONFormat(str: string) {
+  if (/^[\{\[]/.test(str) && /[\}\]]$/.test(str)) {
+    try {
+      const obj = JSON.parse(str)
+
+      if (typeof obj !== 'object' || obj === null)
+        return false
+
+      if (
+        typeof obj.name !== 'string'
+        || typeof obj.url !== 'string'
+        || typeof obj.avatar !== 'string'
+        || typeof obj.desc !== 'string'
+        || typeof obj.tag !== 'object'
+        || obj.tag === null
+      )
+        return false
+
+      if (
+        typeof obj.tag.name !== 'string'
+        || typeof obj.tag.color !== 'string'
+        || typeof obj.tag.bg !== 'string'
+      )
+        return false
+
+      return true
+    }
+    catch (error) {
+      return false
+    }
+  }
+  return false
+}
