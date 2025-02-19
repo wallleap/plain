@@ -9,9 +9,20 @@ import App from './App.vue'
 import router from './router'
 import './custom.css'
 import { createNotify } from './services/notifyService'
+import { useLeanCloudStore } from './stores/leanCloud'
+
+const pinia = createPinia()
+
+const app = createApp(App)
+app.use(directives)
+  .use(router)
+  .use(pinia)
+  .mount('#app')
+
+const { needLeanCloud } = useLeanCloudStore()
 
 // 初始化 LeanCloud
-if (import.meta.env.V_LEANCLOUD_ID && import.meta.env.V_LEANCLOUD_KEY && import.meta.env.V_LEANCLOUD_SERVER) {
+if (needLeanCloud) {
   AV.init({
     appId: import.meta.env.V_LEANCLOUD_ID,
     appKey: import.meta.env.V_LEANCLOUD_KEY,
@@ -25,11 +36,3 @@ else {
     duration: 3000,
   })
 }
-
-const pinia = createPinia()
-
-const app = createApp(App)
-app.use(directives)
-  .use(router)
-  .use(pinia)
-  .mount('#app')
