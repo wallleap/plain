@@ -26,7 +26,7 @@ const beianLink = import.meta.env.V_BEIAN_LINK
           <a :href="mailTo" class="h-100% w-100% flex flex-justify-center flex-items-center rd-100 bg-gray-100 text-gray-500 no-underline dark:bg-gray-800 hover:bg-gray-200 hover:text-gray-700 dark:hover:bg-gray-400"><i class="fa-solid fa-envelope" /></a>
         </li>
         <li class="h-9 w-9 flex-shrink-0 cursor-pointer">
-          <a href="//www.travellings.cn/" target="_blank" class="h-100% w-100% flex flex-justify-center flex-items-center rd-100 bg-gray-100 text-gray-500 no-underline dark:bg-gray-800 hover:bg-gray-200 hover:text-gray-700 dark:hover:bg-gray-400"><i class="fa-solid fa-train" /></a>
+          <a href="//t.me/KemiaoJun" class="h-100% w-100% flex flex-justify-center flex-items-center rd-100 bg-gray-100 text-gray-500 no-underline dark:bg-gray-800 hover:bg-gray-200 hover:text-gray-700 dark:hover:bg-gray-400"><i class="fa-brands fa-telegram" /></a>
         </li>
       </ul>
       <p v-if="icp || beian" class="m-0 mt-6 align-middle text-gray-400">
