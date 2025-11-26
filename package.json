@@ -31,6 +31,7 @@
     "pinia": "2.1.7",
     "typed.js": "2.1.0",
     "vue": "^3.4.19",
+    "vue-i18n": "10",
     "vue-router": "4",
     "vue3-seamless-scroll": "2.0.1"
   },

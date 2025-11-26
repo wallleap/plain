@@ -1,24 +1,26 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '../stores/theme'
 import logo from '/logo.svg?raw'
 
 const isDark = ref(false)
 const themeStore = useThemeStore()
+const { t } = useI18n()
 const links = [
   {
     id: 1,
-    name: 'Posts',
+    name: t('nav.posts'),
     link: '/posts',
   },
   {
     id: 2,
-    name: 'Tags',
+    name: t('nav.tags'),
     link: '/tags',
   },
   {
     id: 3,
-    name: 'Friends',
+    name: t('nav.friends'),
     link: '/friend',
   },
 ]

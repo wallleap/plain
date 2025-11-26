@@ -116,3 +116,30 @@ export function isSpecificJSONFormat(str: string) {
   }
   return false
 }
+
+/**
+ * 获取浏览器语言
+ * @description 根据浏览器语言设置语言
+ * @returns 'zh-CN' or 'en-US'
+ */
+export function getBrowserLocale() {
+  const STORAGE_KEY = 'CURRENT_LOCALE'
+  const storageLocale = localStorage.getItem(STORAGE_KEY) || ''
+  const browserLocale = navigator.language
+  const browserLocaleLower = browserLocale.toLowerCase()
+  const hasZh = (lang: string) => lang.includes('zh')
+
+  // 先检查 localStorage 中的语言设置
+  if (hasZh(storageLocale)) {
+    document.documentElement.lang = 'zh-CN'
+    return 'zh-CN'
+  }
+
+  if (hasZh(browserLocaleLower)) {
+    document.documentElement.lang = 'zh-CN'
+    return 'zh-CN'
+  }
+
+  document.documentElement.lang = 'en-US'
+  return 'en-US'
+}

@@ -7,6 +7,7 @@ import AV from 'leancloud-storage'
 import directives from './directives/index'
 import App from './App.vue'
 import router from './router'
+import i18n from './locale'
 import './custom.css'
 import { createNotify } from './services/notifyService'
 import { useLeanCloudStore } from './stores/leanCloud'
@@ -17,6 +18,7 @@ const app = createApp(App)
 app.use(directives)
   .use(router)
   .use(pinia)
+  .use(i18n)
   .mount('#app')
 
 const { needLeanCloud } = useLeanCloudStore()
