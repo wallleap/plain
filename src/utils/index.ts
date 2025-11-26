@@ -143,3 +143,23 @@ export function getBrowserLocale() {
   document.documentElement.lang = 'en-US'
   return 'en-US'
 }
+
+/**
+ * 生成符合 RFC 4122 标准的 UUID v4
+ * @returns 标准 UUID 字符串
+ */
+export function generateUUID(): string {
+  // 生成16字节的随机数组
+  const array = new Uint8Array(16)
+  crypto.getRandomValues(array)
+
+  // 修正版本位（第6字节，设置为0100，对应版本4）
+  array[6] = (array[6] & 0x0F) | 0x40
+  // 修正变体位（第8字节，设置为10xx，符合RFC 4122）
+  array[8] = (array[8] & 0x3F) | 0x80
+
+  // 转换为十六进制并格式化
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0'))
+    .join('')
+    .replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5')
+}

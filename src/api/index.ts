@@ -1,7 +1,7 @@
 import AV from 'leancloud-storage'
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
-import { isSpecificJSONFormat } from '../utils'
+import { generateUUID, isSpecificJSONFormat } from '../utils'
 import type { Friend, Post, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
@@ -192,15 +192,16 @@ export async function recordVisit({ referrer = '', ua = '', ip = '' }) {
     query.equalTo('referrer', referrer)
     const results = await query.first()
     if (results) {
-    // results.increment('times', 1)
       results.set('times', results.get('times') + 1)
+      const visitors = results.get('visitors')
+      visitors.push({ ua, ip, id: generateUUID(), time: new Date().toISOString() })
+      results.set('visitors', visitors)
       return await results.save()
     }
     else {
       visitorObject.set('referrer', referrer)
+      visitorObject.set('visitors', [{ ua, ip }])
       visitorObject.set('times', 1)
-      visitorObject.set('ua', ua)
-      visitorObject.set('ip', ip)
       return await visitorObject.save()
     }
   }
