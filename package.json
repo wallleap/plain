@@ -13,6 +13,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "3.3.2",
     "@types/markdown-it": "13.0.7",
     "@unocss/reset": "0.58.5",
     "@vueuse/core": "10.9.0",

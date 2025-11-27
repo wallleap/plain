@@ -1,7 +1,8 @@
 import AV from 'leancloud-storage'
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
-import { generateUUID, isSpecificJSONFormat } from '../utils'
+import { isSpecificJSONFormat } from '../utils'
 import type { Friend, Post, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
@@ -191,20 +192,22 @@ export async function recordVisit({ referrer = '', ua = '', ip = '' }) {
     const visitorObject = new VisitorObject()
     query.equalTo('referrer', referrer)
     const results = await query.first()
+    const result = await FingerprintJS.load()
+    const visitorId = (await result.get()).visitorId
     if (results) {
       results.set('times', results.get('times') + 1)
       const visitors = results.get('visitors')
       if (!visitors) {
-        results.set('visitors', [{ ua, ip, id: generateUUID(), time: new Date().toISOString() }])
+        results.set('visitors', [{ ua, ip, id: visitorId, time: new Date().toISOString() }])
         return await results.save()
       }
-      visitors.push({ ua, ip, id: generateUUID(), time: new Date().toISOString() })
+      visitors.push({ ua, ip, id: visitorId, time: new Date().toISOString() })
       results.set('visitors', visitors)
       return await results.save()
     }
     else {
       visitorObject.set('referrer', referrer)
-      visitorObject.set('visitors', [{ ua, ip, id: generateUUID(), time: new Date().toISOString() }])
+      visitorObject.set('visitors', [{ ua, ip, id: visitorId, time: new Date().toISOString() }])
       visitorObject.set('times', 1)
       return await visitorObject.save()
     }
