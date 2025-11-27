@@ -194,13 +194,17 @@ export async function recordVisit({ referrer = '', ua = '', ip = '' }) {
     if (results) {
       results.set('times', results.get('times') + 1)
       const visitors = results.get('visitors')
+      if (!visitors) {
+        results.set('visitors', [{ ua, ip, id: generateUUID(), time: new Date().toISOString() }])
+        return await results.save()
+      }
       visitors.push({ ua, ip, id: generateUUID(), time: new Date().toISOString() })
       results.set('visitors', visitors)
       return await results.save()
     }
     else {
       visitorObject.set('referrer', referrer)
-      visitorObject.set('visitors', [{ ua, ip }])
+      visitorObject.set('visitors', [{ ua, ip, id: generateUUID(), time: new Date().toISOString() }])
       visitorObject.set('times', 1)
       return await visitorObject.save()
     }
