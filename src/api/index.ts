@@ -6,7 +6,7 @@ import { isSpecificJSONFormat } from '../utils'
 import type { Friend, Post, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
-const isDev = /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|::1|127\.0\.0\.1|localhost)/.test(window.location.host)
+// const isDev = /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|::1|127\.0\.0\.1|localhost)/.test(window.location.host)
 const USERNAME: string = import.meta.env.V_USERNAME
 const REPO: string = import.meta.env.V_REPOSITORY
 const FR_REPO: string = import.meta.env.V_FRIENDS_REPO
@@ -20,6 +20,48 @@ if (!USERNAME || !REPO) {
   })
   throw new Error('V_USERNAME, V_REPOSITORY must be set')
 }
+
+// 定义 Counter 数据模型接口（类型安全）
+interface CounterData {
+  id: number
+  title: string
+  times: number
+  site: string
+  createdAt?: Date
+  updatedAt?: Date
+}
+type CounterObject = AV.Object & {
+  get: (key: keyof CounterData) => CounterData[keyof CounterData] | undefined
+  set: (key: keyof CounterData, value: CounterData[keyof CounterData]) => void
+  increment: (key: 'times', amount: number) => void
+}
+// 类型定义（类型安全核心）
+interface VisitorLog {
+  ua: string
+  ip: string
+  id: string
+  time: string
+}
+
+interface VisitorRecord {
+  referrer: string
+  times: number
+  visitors: VisitorLog[]
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+type VisitorObject = AV.Object & {
+  get: (key: keyof VisitorRecord) => VisitorRecord[keyof VisitorRecord] | undefined
+  set: (key: keyof VisitorRecord, value: VisitorRecord[keyof VisitorRecord]) => void
+  increment: (key: 'times', amount: number) => void
+}
+
+// 常量定义（避免硬编码）
+const COUNTER_CLASS_NAME = 'Counter' // 数据表名
+const READ_COUNT_INCREMENT = 1 // 阅读量递增步长
+const VISITOR_CLASS_NAME = 'Visitor'
+const VISIT_COUNT_INCREMENT = 1
 
 // API 链接拼接
 const BLOG_PREFIX = `/repos/${USERNAME}/${REPO}`
@@ -123,97 +165,195 @@ export async function getNotice() {
   }
 }
 
-/*
- * 设置文章阅读量
- * */
-export async function setCounter(post: Post) {
-  if (isDev)
-    return
-  const { title, id } = post
-  const CounterObject = AV.Object.extend('Counter')
-  const counterObject = new CounterObject()
+/**
+ * 设置文章阅读量（修复类型错误）
+ * @param post 文章信息（需包含 id 和 title）
+ * @returns 保存后的 Counter 实例或 null
+ */
+export async function setCounter(post: Pick<Post, 'id' | 'title'>): Promise<CounterObject | null> {
+  if (import.meta.env.DEV)
+    return null
+
+  // 参数校验
+  if (!post?.id || !post?.title) {
+    console.warn('SetCounter: 文章 id 或 title 缺失', post)
+    return null
+  }
+
+  const { id, title } = post
+  // 不使用泛型，直接扩展 AV.Object，后续通过类型别名约束
+  const CounterClass = AV.Object.extend(COUNTER_CLASS_NAME)
+
   try {
-    const query = new AV.Query('Counter')
+    const query = new AV.Query(COUNTER_CLASS_NAME) as AV.Query<CounterObject>
     query.equalTo('id', id)
-    const results = await query.find()
-    if (results.length > 0) {
-      const counter = results[0]
-      // counter.increment('times', 1)
-      counter.set('times', counter.get('times') + 1)
-      return await counter.save()
+    query.limit(1)
+
+    const [existingCounter] = await query.find()
+
+    if (existingCounter) {
+      // 原子操作 increment
+      existingCounter.increment('times', READ_COUNT_INCREMENT)
+      return await existingCounter.save(null, {
+        fetchWhenSave: true,
+      })
     }
     else {
-      counterObject.set('title', title)
-      counterObject.set('times', 1)
-      counterObject.set('id', id)
-      counterObject.set('site', location.href)
-      return await counterObject.save()
+      // 新建实例（类型约束通过 CounterObject 保证）
+      const newCounter = new CounterClass() as CounterObject
+      newCounter.set('id', id)
+      newCounter.set('title', title)
+      newCounter.set('times', READ_COUNT_INCREMENT)
+      newCounter.set('site', window.location.href)
+      return await newCounter.save()
     }
   }
   catch (error) {
-    console.error('Error occurs at SetCounter,', error)
+    if (error instanceof AV.Error)
+      console.error(`SetCounter LeanCloud 错误 [${error.code}]:`, error.message, '文章ID:', id)
+    else
+      console.error('SetCounter 未知错误:', error, '文章ID:', id)
+
     return null
   }
 }
 
-/*
- * 获取阅读量
- * */
-export async function getCounter(ids: number[]) {
+/**
+ * 批量获取文章阅读量（修复类型错误）
+ * @param ids 文章 id 数组
+ * @returns 键为文章 id，值为阅读量的对象（默认 0）
+ */
+export async function getCounter(ids: number[]): Promise<Record<number, number>> {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    console.warn('GetCounter: 文章 id 数组为空')
+    return {}
+  }
+
   try {
-    const query = new AV.Query('Counter')
+    const query = new AV.Query(COUNTER_CLASS_NAME) as AV.Query<CounterObject>
     query.containedIn('id', ids)
+
     const results = await query.find()
-    if (results.length > 0) {
-      const times = {}
-      // @ts-expect-error 不需要类型检查
-      results.forEach(item => (times[item.attributes.id] = item.attributes.times))
-      return times
-    }
-    else {
-      return {}
-    }
+
+    // 构建计数映射（使用 get 方法无类型错误）
+    const countMap = results.reduce<Record<number, number>>((map, item) => {
+      const articleId = item.get('id') as number // 明确类型断言（安全，因 id 必传）
+      const readCount = item.get('times') as number || 0
+      map[articleId] = readCount
+      return map
+    }, {})
+
+    // 补全未查询到的 id，默认 0
+    ids.forEach((id) => {
+      if (countMap[id] === undefined)
+        countMap[id] = 0
+    })
+
+    return countMap
   }
   catch (error) {
-    console.error('Error occurs at getCounter,', error)
-    return null
+    if (error instanceof AV.Error)
+      console.error(`GetCounter LeanCloud 错误 [${error.code}]:`, error.message, '请求ID:', ids)
+    else
+      console.error('GetCounter 未知错误:', error, '请求ID:', ids)
+
+    return ids.reduce((map, id) => ({ ...map, [id]: 0 }), {})
   }
 }
 
-/*
- * 记录访问来源
- * */
-export async function recordVisit({ referrer = '', ua = '', ip = '' }) {
-  if (isDev)
-    return
+/**
+ * 记录访问来源（优化点：原子操作、异步容错、类型约束、性能提升）
+ * @param params 访问参数
+ * @param params.referrer 访问来源（默认空字符串）
+ * @param params.ua 用户代理（默认空字符串）
+ * @param params.ip IP地址（默认空字符串）
+ * @returns 保存后的 Visitor 实例或 null
+ */
+export async function recordVisit({
+  referrer = '',
+  ua = '',
+  ip = '',
+}: {
+  referrer?: string
+  ua?: string
+  ip?: string
+}): Promise<VisitorObject | null> {
+  // 开发环境直接返回
+  if (import.meta.env.DEV)
+    return null
+
+  // 初始化 FingerprintJS（单独提取，便于错误处理）
+  let visitorId: string | null = null
   try {
-    const query = new AV.Query('Visitor')
-    const VisitorObject = AV.Object.extend('Visitor')
-    const visitorObject = new VisitorObject()
-    query.equalTo('referrer', referrer)
-    const results = await query.first()
-    const result = await FingerprintJS.load()
-    const visitorId = (await result.get()).visitorId
-    if (results) {
-      results.set('times', results.get('times') + 1)
-      const visitors = results.get('visitors')
-      if (!visitors) {
-        results.set('visitors', [{ ua, ip, id: visitorId, time: new Date().toISOString() }])
-        return await results.save()
-      }
-      visitors.push({ ua, ip, id: visitorId, time: new Date().toISOString() })
-      results.set('visitors', visitors)
-      return await results.save()
+    const fp = await FingerprintJS.load({
+      monitoring: false, // 关闭持续监控（仅单次获取指纹）
+    })
+    const result = await fp.get()
+    visitorId = result.visitorId
+  }
+  catch (fpError) {
+    console.error('recordVisit: 设备指纹获取失败', fpError)
+    // 指纹获取失败仍可记录（用空字符串兜底）
+    visitorId = ''
+  }
+
+  // 构建访问日志（统一格式）
+  const visitLog: VisitorLog = {
+    ua: ua.trim(),
+    ip: ip.trim(),
+    id: visitorId || '',
+    time: new Date().toISOString(),
+  }
+
+  // 查询条件：按 referrer 匹配（忽略空字符串首尾空格）
+  const normalizedReferrer = referrer.trim()
+  const VisitorClass = AV.Object.extend(VISITOR_CLASS_NAME)
+
+  try {
+    const query = new AV.Query(VISITOR_CLASS_NAME) as AV.Query<VisitorObject>
+    query.equalTo('referrer', normalizedReferrer)
+    query.limit(1) // 仅查询1条（性能优化）
+
+    // 容错处理：查询失败时返回 null（避免中断流程）
+    const existingVisitor = await query.first().catch((queryErr) => {
+      console.error('recordVisit: 查询访问记录失败', queryErr)
+      return null
+    })
+
+    if (existingVisitor) {
+      // 🔥 核心优化：原子操作 + 数组操作（避免并发问题）
+      existingVisitor.increment('times', VISIT_COUNT_INCREMENT) // 原子递增总次数
+
+      // LeanCloud 数组添加优化：使用 add 方法（支持原子操作，避免覆盖）
+      existingVisitor.add('visitors', visitLog)
+
+      return await existingVisitor.save(null, {
+        fetchWhenSave: true, // 保存后返回最新数据
+      })
     }
     else {
-      visitorObject.set('referrer', referrer)
-      visitorObject.set('visitors', [{ ua, ip, id: visitorId, time: new Date().toISOString() }])
-      visitorObject.set('times', 1)
-      return await visitorObject.save()
+      // 新建访问记录（类型约束，避免字段遗漏）
+      const newVisitor = new VisitorClass() as VisitorObject
+      newVisitor.set('referrer', normalizedReferrer)
+      newVisitor.set('times', VISIT_COUNT_INCREMENT)
+      newVisitor.set('visitors', [visitLog]) // 初始化日志数组
+
+      return await newVisitor.save()
     }
   }
   catch (error) {
-    console.error('Error occurs at recordVisit,', error)
+    // 错误分级处理（便于调试）
+    if (error instanceof AV.Error) {
+      console.error(
+        `recordVisit: LeanCloud 错误 [${error.code}]:`,
+        error.message,
+        '访问来源:',
+        normalizedReferrer,
+      )
+    }
+    else {
+      console.error('recordVisit: 未知错误', error, '访问来源:', normalizedReferrer)
+    }
     return null
   }
 }
