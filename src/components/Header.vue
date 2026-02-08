@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { useThemeStore } from '../stores/theme'
 import logo from '/logo.svg?raw'
 
 const isDark = ref(false)
 const themeStore = useThemeStore()
+const route = useRoute()
 const { t } = useI18n()
 const activeClass = 'liquid'
 const links = [
@@ -81,8 +83,8 @@ function changeTheme(event: MouseEvent) {
           <router-link
             :to="link.link"
             class="h-9 flex flex-justify-center flex-items-center rd-full px-1 text-black/75 sm:px-4 xs:px-2 dark:text-white"
-            :class="{ [activeClass]: $route.path === link.link }"
-            :style="{ backgroundColor: $route.path === link.link ? 'rgba(0,0,0,0.08)' : 'transparent' }"
+            :class="{ [activeClass]: route.path === link.link }"
+            :style="{ backgroundColor: route.path === link.link ? 'rgba(0,0,0,0.08)' : 'transparent' }"
           >
             {{ link.name }}
           </router-link>
@@ -91,7 +93,7 @@ function changeTheme(event: MouseEvent) {
     </nav>
     <ul
       class="liquid m-l-2 h-auto w-auto flex list-none items-center justify-start overflow-hidden rd-full bg-[rgba(0,0,0,0.05)] px-0.6 pb-0.7 pt-0.5 transition-all duration-200 dark:bg-[rgba(255,255,255,0.09)]"
-      :class="{ 'w-9 h-9': $route.path === '/search' }"
+      :class="{ 'w-9 h-9': route.path === '/search' }"
     >
       <li class="m-0 cursor-pointer p-0">
         <router-link
