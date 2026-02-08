@@ -56,6 +56,14 @@ export default defineConfig({
         'my-animation': 'cubic-bezier(0.215, 0.610, 0.355, 1.000)',
       },
     },
+    breakpoints: {
+      'xs': '320px',
+      'sm': '600px',
+      'md': '840px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
   },
   presets: [
     presetUno({
