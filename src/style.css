@@ -47,7 +47,7 @@ a:hover {
   color: var(--primary);
 }
 
-a.router-link-active:not(.search-btn) {
+/* a.router-link-active:not(.search-btn) {
   position: relative;
 }
 
@@ -59,7 +59,7 @@ a.router-link-active:not(.search-btn)::after {
   width: 100%;
   height: 2px;
   background-color: var(--primary);
-}
+} */
 
 /**
   Animated Theme Toggle

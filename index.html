@@ -55,6 +55,36 @@
         </div>
       </div>
     </div>
+    <!-- https://css.im1010ioio.dev/effects/css-svg-ios26-liquid-glass/ -->
+    <!-- 藏起來的 SVG 濾鏡，這是效果的靈魂 -->
+    <svg width="0" height="0" style="position:absolute;left:-9999px;top:-9999px">
+      <defs>
+        <filter id="liquid_glass_filter">
+          <!-- 產生碎形雜訊 -->
+          <feTurbulence type="fractalNoise" baseFrequency="0.003" numOctaves="2" seed="7" result="noise" />
+          <!-- 將雜訊模糊化，讓它更平滑 -->
+          <feGaussianBlur in="noise" stdDeviation="1.2" result="map" />
+          <!-- 用模糊後的雜訊圖來扭曲我們的元素 -->
+          <feDisplacementMap in="SourceGraphic" in2="map" scale="110" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+    <style>
+      .liquid {
+        /* 真正的液態關鍵：先模糊背景，再套用 SVG 濾鏡扭曲 */
+        backdrop-filter: blur(2px) url(#liquid_glass_filter);
+
+        /* 用多層次的 box-shadow 營造玻璃的厚度與光暈 */
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.45), /* 內上光暈 */
+          inset 0 -1px 0 rgba(255,255,255,0.18), /* 內下陰影 */
+          inset 6px 6px 10px rgba(255,255,255,0.12), /* 內側光暈 */
+          0 6px 10px rgba(0,0,0,0.08); /* 外陰影 */
+
+        /* 半透明的背景色 */
+        /* background-color: rgba(255,255,255, 0.1); */
+      }
+    </style>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
