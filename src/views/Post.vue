@@ -52,7 +52,7 @@ function activeAnchor(currentAnchor: HTMLElement) {
 
 function navLinkAnchor() {
   const tocWrapper = document.querySelector('#toc-wrapper')
-  const linkAnchors = tocWrapper!.querySelectorAll('a')
+  const linkAnchors = tocWrapper?.querySelectorAll('a') || []
   const titles: HTMLElement[] = []
   if (linkAnchors) {
     linkAnchors.forEach((linkAnchor) => {
@@ -113,7 +113,7 @@ watchEffect(async () => {
 onMounted(async () => {
   try {
     Object.assign(post, await getPost({ number: Number(route.params.num) }))
-    setCounter(post)
+    setCounter(post, true)
     if (post.title)
       document.title = `${post.title} - ${import.meta.env.V_TITLE}`
     commentPageUrl.value = post.comments_url.replace('comments', '')

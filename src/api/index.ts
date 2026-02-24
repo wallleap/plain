@@ -2,7 +2,7 @@ import AV from 'leancloud-storage'
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
-import { isSpecificJSONFormat } from '../utils'
+import { isSpecificJSONFormat, isValidJSON } from '../utils'
 import type { Friend, Post, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
@@ -27,13 +27,8 @@ interface CounterData {
   title: string
   times: number
   site: string
-  createdAt?: Date
-  updatedAt?: Date
-}
-type CounterObject = AV.Object & {
-  get: (key: keyof CounterData) => CounterData[keyof CounterData] | undefined
-  set: (key: keyof CounterData, value: CounterData[keyof CounterData]) => void
-  increment: (key: 'times', amount: number) => void
+  createdAt?: string
+  updatedAt?: string
 }
 // 类型定义（类型安全核心）
 interface VisitorLog {
@@ -58,7 +53,6 @@ type VisitorObject = AV.Object & {
 }
 
 // 常量定义（避免硬编码）
-const COUNTER_CLASS_NAME = 'Counter' // 数据表名
 const READ_COUNT_INCREMENT = 1 // 阅读量递增步长
 const VISITOR_CLASS_NAME = 'Visitor'
 const VISIT_COUNT_INCREMENT = 1
@@ -134,7 +128,7 @@ export async function getComments({ url = '' }) {
  * 获取文章标签
  * */
 export async function getTags() {
-  const filterLabel = ['Notice', 'Inspiration', 'Friend', 'Book', 'About']
+  const filterLabel = ['Notice', 'Inspiration', 'Friend', 'Book', 'About', 'Counter']
   const res: Tag[] = await fetchWithToken(`${BLOG_PREFIX}/labels?page=1&per_page=1000`)
   const resFilter = res.filter(item => !filterLabel.includes(item.name))
   const tags = resFilter.map(item => ({
@@ -166,99 +160,46 @@ export async function getNotice() {
 }
 
 /**
- * 设置文章阅读量（修复类型错误）
- * @param post 文章信息（需包含 id 和 title）
+ * 获取或设置文章阅读量
+ * @param post 文章信息（需包含 id 和 title num）
+ * @param needSet 是否需要修改
  * @returns 保存后的 Counter 实例或 null
  */
-export async function setCounter(post: Pick<Post, 'id' | 'title'>): Promise<CounterObject | null> {
-  if (import.meta.env.DEV)
-    return null
-
-  // 参数校验
-  if (!post?.id || !post?.title) {
-    console.warn('SetCounter: 文章 id 或 title 缺失', post)
-    return null
-  }
-
-  const { id, title } = post
-  // 不使用泛型，直接扩展 AV.Object，后续通过类型别名约束
-  const CounterClass = AV.Object.extend(COUNTER_CLASS_NAME)
-
-  try {
-    const query = new AV.Query(COUNTER_CLASS_NAME) as AV.Query<CounterObject>
-    query.equalTo('id', id)
-    query.limit(1)
-
-    const [existingCounter] = await query.find()
-
-    if (existingCounter) {
-      // 原子操作 increment
-      existingCounter.increment('times', READ_COUNT_INCREMENT)
-      return await existingCounter.save(null, {
-        fetchWhenSave: true,
+export async function setCounter(post?: Post, needSet: boolean = false) {
+  const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=closed&labels=Counter`)
+  const data = res?.[0].body || []
+  let counters: CounterData[] = []
+  if (isValidJSON(data).isValid)
+    counters = isValidJSON(data).parsedData
+  if (!needSet)
+    return counters // 提前返回，后面不执行
+  if (post) {
+    // 开发环境直接返回
+    if (import.meta.env.DEV)
+      return counters
+    const counterIndex = counters.findIndex(counter => counter.id === post.num)
+    if (counterIndex === -1) {
+      counters.push({
+        id: post.num,
+        times: 1,
+        title: post.title,
+        site: window.location.href,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
     }
     else {
-      // 新建实例（类型约束通过 CounterObject 保证）
-      const newCounter = new CounterClass() as CounterObject
-      newCounter.set('id', id)
-      newCounter.set('title', title)
-      newCounter.set('times', READ_COUNT_INCREMENT)
-      newCounter.set('site', window.location.href)
-      return await newCounter.save()
+      counters[counterIndex].times += READ_COUNT_INCREMENT
+      counters[counterIndex].updatedAt = new Date().toISOString()
     }
-  }
-  catch (error) {
-    if (error instanceof AV.Error)
-      console.error(`SetCounter LeanCloud 错误 [${error.code}]:`, error.message, '文章ID:', id)
-    else
-      console.error('SetCounter 未知错误:', error, '文章ID:', id)
-
-    return null
-  }
-}
-
-/**
- * 批量获取文章阅读量（修复类型错误）
- * @param ids 文章 id 数组
- * @returns 键为文章 id，值为阅读量的对象（默认 0）
- */
-export async function getCounter(ids: number[]): Promise<Record<number, number>> {
-  if (!Array.isArray(ids) || ids.length === 0) {
-    console.warn('GetCounter: 文章 id 数组为空')
-    return {}
-  }
-
-  try {
-    const query = new AV.Query(COUNTER_CLASS_NAME) as AV.Query<CounterObject>
-    query.containedIn('id', ids)
-
-    const results = await query.find()
-
-    // 构建计数映射（使用 get 方法无类型错误）
-    const countMap = results.reduce<Record<number, number>>((map, item) => {
-      const articleId = item.get('id') as number // 明确类型断言（安全，因 id 必传）
-      const readCount = item.get('times') as number || 0
-      map[articleId] = readCount
-      return map
-    }, {})
-
-    // 补全未查询到的 id，默认 0
-    ids.forEach((id) => {
-      if (countMap[id] === undefined)
-        countMap[id] = 0
+    await fetchWithToken(res?.[0].url, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        body: JSON.stringify(counters),
+      }),
     })
-
-    return countMap
   }
-  catch (error) {
-    if (error instanceof AV.Error)
-      console.error(`GetCounter LeanCloud 错误 [${error.code}]:`, error.message, '请求ID:', ids)
-    else
-      console.error('GetCounter 未知错误:', error, '请求ID:', ids)
-
-    return ids.reduce((map, id) => ({ ...map, [id]: 0 }), {})
-  }
+  return counters
 }
 
 /**

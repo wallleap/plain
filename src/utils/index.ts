@@ -80,6 +80,97 @@ export function hexToHSL(hex: string) {
 }
 
 /**
+ * 检测字符串是否为合规的 JSON 格式
+ * @param {string} jsonStr 待检测的 JSON 字符串
+ * @param {object} [options] 可选配置项
+ * @param {boolean} [options.allowSingleQuotes] 是否允许单引号（默认不允许，严格遵循 JSON 规范）
+ * @param {boolean} [options.allowTrailingComma] 是否允许末尾逗号（默认不允许）
+ * @returns {object} 检测结果
+ * @property {boolean} isValid - 是否为合法 JSON
+ * @property {any} [parsedData] - 解析后的 JSON 数据（仅 isValid 为 true 时存在）
+ * @property {string} [errorMessage] - 错误信息（仅 isValid 为 false 时存在）
+ * @property {string} [errorType] - 错误类型（仅 isValid 为 false 时存在，如：SYNTAX_ERROR、INVALID_TYPE 等）
+ */
+export function isValidJSON(jsonStr: string, options = {}) {
+  // 默认配置
+  const config = {
+    allowSingleQuotes: false,
+    allowTrailingComma: false,
+    ...options,
+  }
+
+  // 空值校验
+  if (typeof jsonStr !== 'string') {
+    return {
+      isValid: false,
+      errorMessage: '输入不是字符串类型',
+      errorType: 'INVALID_INPUT_TYPE',
+    }
+  }
+
+  // 去除首尾空白字符
+  const trimmedStr = jsonStr.trim()
+
+  // 空字符串校验
+  if (trimmedStr === '') {
+    return {
+      isValid: false,
+      errorMessage: '输入是空字符串',
+      errorType: 'EMPTY_STRING',
+    }
+  }
+
+  // 预处理：如果允许单引号，先替换为双引号（注意避免替换字符串内的单引号）
+  let processedStr = trimmedStr
+  if (config.allowSingleQuotes) {
+    // 正则替换：仅替换键和值外层的单引号（简单处理，复杂场景可优化）
+    processedStr = processedStr
+      .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":') // 替换键的单引号
+      .replace(/: (['"])(.*?)\1(?=[,}\]])/g, ': "$2"') // 替换值的单引号
+  }
+
+  // 预处理：如果允许末尾逗号，移除末尾逗号
+  if (config.allowTrailingComma) {
+    processedStr = processedStr
+      .replace(/,\s*}/g, '}') // 移除对象末尾逗号
+      .replace(/,\s*]/g, ']') // 移除数组末尾逗号
+  }
+
+  try {
+    // 尝试解析 JSON
+    const parsedData = JSON.parse(processedStr)
+
+    return {
+      isValid: true,
+      parsedData,
+    }
+  }
+  catch (error) {
+    // 解析失败，返回详细错误信息
+    const originalError = error as Error
+    let errorType = 'SYNTAX_ERROR'
+    let errorMsg = `JSON 语法错误：${originalError.message}`
+
+    // 细化错误类型提示
+    if (originalError.message.includes('Unexpected token')) {
+      errorType = 'UNEXPECTED_TOKEN'
+      errorMsg = `JSON 包含非法字符：${originalError.message.split(':')[1]?.trim() || '未知字符'}`
+    }
+    else if (originalError.message.includes('Unexpected end of JSON input')) {
+      errorType = 'UNEXPECTED_END'
+      errorMsg = 'JSON 字符串不完整（可能缺少闭合的 } 或 ]）'
+    }
+
+    return {
+      isValid: false,
+      errorMessage: errorMsg,
+      errorType,
+      originalError, // 保留原始错误对象（可选）
+    }
+  }
+}
+
+/**
  * 检测是否是一个有效的友链 JSON 字符串
  * @returns true or false
  */

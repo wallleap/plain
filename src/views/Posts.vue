@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import { useLeanCloudStore } from '../stores/leanCloud'
-import { getCounter, getPosts } from '../api'
+import { getPosts, setCounter } from '../api'
 import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
 
 const posts: Post[] = reactive([])
 let curPage = 1 // 当前页码，不需要响应式
 const noMore = ref(false) // 没有更多文章，用于取消监听触底
-
-const { needLeanCloud } = useLeanCloudStore()
 
 /**
  * 获取更多文章
@@ -32,24 +29,23 @@ async function moreData(currentPage: number) {
  * 设置文章浏览次数
  * 使用到了上面的变量 posts
  */
-async function setPostTimes() {
+async function setPostTimes(posts: Post[]) {
   try {
-    const ids = posts.map((post: Post) => post.id)
-    const times = (needLeanCloud && posts.length > 0)
-      ? await getCounter(ids) as { [key: string]: number }
-      : {}
-    if (times) {
-      posts.forEach((post: Post) => {
-        post.times = times[post.id] || 1
+    const counters: Array<{ id: number, times: number }> = await setCounter()
+    if (counters && counters.length > 0) {
+      posts.forEach((post) => {
+        const findData = counters.find(counter => post.num === counter.id)
+        post.times = findData?.times || 1
       })
     }
     else {
-      console.error('getCounter failed')
+      console.error('getCounters failed')
     }
   }
   catch (error) {
     console.error('Error fetching data:', error)
   }
+  return posts
 }
 
 /**
@@ -64,8 +60,8 @@ useInfiniteScroll(
       noMore.value = true
       return
     }
-    posts.push(...res)
-    setPostTimes()
+    const newPosts = await setPostTimes(res)
+    posts.push(...newPosts)
   },
   {
     distance: 120,
@@ -79,8 +75,8 @@ useInfiniteScroll(
     <main v-if="posts?.length > 0" class="select-none line-height-none slide-enter-1000">
       <article v-for="post in posts" :key="post.id" v-slide-in class="group mb-12 cursor-pointer">
         <router-link :to="{ name: 'post', params: { num: Number(post.num) } }">
-          <div v-if="post.milestone?.title || post.comments > 0" class="m-y-3 flex items-center">
-            <span class="mr-3 border-rd bg-gray-100 p-x-2 p-y-1 font-size-3.4 text-gray-400 dark:bg-gray-800 dark:text-gray-600 group-hover:text-gray-500">{{ post.milestone.title }}</span>
+          <div class="m-y-3 flex items-center">
+            <span v-if="post.milestone?.title" class="mr-3 border-rd bg-gray-100 p-x-2 p-y-1 font-size-3.4 text-gray-400 dark:bg-gray-800 dark:text-gray-600 group-hover:text-gray-500">{{ post.milestone.title }}</span>
             <span v-if="post.comments > 0" class="mr-3 text-gray-400 dark:text-gray-600 group-hover:text-gray-500"><i class="fa-regular fa-comments mr-1.4" />{{ post.comments }}</span>
             <span class="text-gray-400 dark:text-gray-600 group-hover:text-gray-500"><i class="fa-regular fa-eye mr-1.4" />{{ post.times }}</span>
           </div>
