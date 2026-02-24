@@ -10,6 +10,7 @@ const myAvatar = import.meta.env.V_AVATAR
 const myDesc = import.meta.env.V_DESC
 const utt = import.meta.env.V_UTTERANCES_CODE
 const friendRepo = import.meta.env.V_FRIENDS_REPO || ''
+const showLinkInfo = () => myAvatar || myDesc || myName || myUrl
 const friends: Friend[] = reactive([])
 
 document.title = `${import.meta.env.V_TITLE} | 友链`
@@ -50,14 +51,16 @@ onUnmounted(() => {
     </ul>
     <div v-if="friends.length" class="font-size-4 text-gray-600 slide-enter-1000 dark:text-gray-400">
       <p>欢迎访问我的博客，希望可以给你带来帮助</p>
-      <p>如果需要添加友链，请留言，我会尽快处理</p>
-      <p>以下是本站的友链信息：</p>
-      <pre class="flex flex-col overflow-x-auto whitespace-unset rounded bg-light-400 p-4 dark:bg-dark-500">
-        <code class="text-nowrap">name: {{ myName }}</code>
-        <code class="text-nowrap">url: {{ myUrl }}</code>
-        <code class="text-nowrap">avatar: {{ myAvatar }}</code>
-        <code class="text-nowrap">desc: {{ myDesc }}</code>
-      </pre>
+      <template v-if="showLinkInfo()">
+        <p>如果需要添加友链，请留言，我会尽快处理</p>
+        <p>以下是本站的友链信息：</p>
+        <pre class="flex flex-col overflow-x-auto whitespace-unset rounded bg-light-400 p-4 dark:bg-dark-500">
+          <code class="text-nowrap">name: {{ myName }}</code>
+          <code class="text-nowrap">url: {{ myUrl }}</code>
+          <code class="text-nowrap">avatar: {{ myAvatar }}</code>
+          <code class="text-nowrap">desc: {{ myDesc }}</code>
+        </pre>
+      </template>
     </div>
     <div v-if="utt" class="slide-enter-1200">
       <Utterance :utt-script="utt" />
