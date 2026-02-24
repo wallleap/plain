@@ -9,7 +9,6 @@ import App from './App.vue'
 import router from './router'
 import i18n from './locale'
 import './custom.css'
-import { createNotify } from './services/notifyService'
 import { useLeanCloudStore } from './stores/leanCloud'
 
 const pinia = createPinia()
@@ -29,12 +28,5 @@ if (needLeanCloud) {
     appId: import.meta.env.V_LEANCLOUD_ID,
     appKey: import.meta.env.V_LEANCLOUD_KEY,
     serverURL: import.meta.env.V_LEANCLOUD_SERVER,
-  })
-}
-else {
-  createNotify({
-    message: 'LeanCloud 未正确配置，阅读量统计功能将无法正常使用',
-    type: 'error',
-    duration: 3000,
   })
 }
