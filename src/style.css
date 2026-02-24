@@ -13,12 +13,13 @@
 
   --body-bg: #fefefe;
   --color: #121212;
-  --primary: #F3CE49;
+  --primary: #e96a16;
 }
 
 :root[data-theme=dark] body {
   --body-bg: #121212;
   --color: rgb(229 231 235);
+  --primary: #F3CE49;
 }
 
 body {
