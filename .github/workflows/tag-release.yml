@@ -1,0 +1,68 @@
+name: Build Full Repository and Release on Tag Push
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 步骤 1：检出仓库代码
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 步骤 2：验证仓库文件存在
+      - name: Verify repository files exist
+        run: |
+          echo "当前工作目录：$(pwd)"
+          ls -lh
+
+      # 步骤 3：复制 .env.sample 为 .env.local
+      - name: Copy .env.sample to .env.local
+        run: |
+          # 容错处理：先检查文件是否存在，存在再重命名，避免文件不存在导致报错
+          if [ -f ".env.sample" ]; then
+            cp .env.sample .env.local
+            echo "Successfully copied: .env.sample -> .env.local"
+            # 验证重命名结果
+            ls -lh .env.local
+          else
+            echo "Warning: .env.sample not found, skip copying"
+          fi
+
+      # 步骤 4：压缩整个仓库（输出到临时目录，避免文件变化）
+      - name: Compress files into plain directory (tar directly)
+        run: |
+          TAG_NAME=${{ github.ref_name }}
+          ARTIFACT_NAME="plain-${TAG_NAME}"
+          TAR_FILE="/tmp/${ARTIFACT_NAME}.tar.gz"
+          
+          # 直接用 tar --transform 重命名，打包时自动创建 plain 目录
+          tar -zcvf ${TAR_FILE} \
+            --exclude=".github" \
+            --transform='s/^./plain/' \
+            .
+
+          echo "Created tar.gz file at: ${TAR_FILE}"
+        
+          cp ${TAR_FILE} ./
+          ls -lh ./${ARTIFACT_NAME}.tar.gz
+
+      # 步骤 5：创建 Release 并上传压缩包
+      - name: Create Release and upload artifact
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *.tar.gz
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
