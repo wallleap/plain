@@ -45,7 +45,7 @@ jobs:
           TAG_NAME=${{ github.ref_name }}
           ARTIFACT_NAME="plain-${TAG_NAME}"
           TAR_FILE="/tmp/${ARTIFACT_NAME}.tar.gz"
-          
+
           # 直接用 tar --transform 重命名，打包时自动创建 plain 目录
           tar -zcvf ${TAR_FILE} \
             --exclude=".github" \
@@ -53,7 +53,7 @@ jobs:
             .
 
           echo "Created tar.gz file at: ${TAR_FILE}"
-        
+
           cp ${TAR_FILE} ./
           ls -lh ./${ARTIFACT_NAME}.tar.gz
 
