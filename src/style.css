@@ -22,6 +22,10 @@
   --primary: #F3CE49;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -32,11 +36,20 @@ body {
 }
 
 #app {
-  max-width: 650px;
   margin: 0 auto;
   padding: 0 1rem;
   min-height: 100vh;
   overflow: hidden;
+}
+
+@media screen and (min-width: 750px) {
+  html {
+    font-size: clamp(16px, 1vw, 60px);
+  }
+
+  #app {
+    max-width: 50rem;
+  }
 }
 
 a {
