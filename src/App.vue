@@ -3,13 +3,15 @@ import { onMounted, ref } from 'vue'
 import Header from './components/Header.vue'
 import Copyright from './components/Copyright.vue'
 import BackToTop from './components/BackToTop.vue'
-import { getNotice, recordVisit } from './api'
+import { getNotice } from './api'
+import { useViewsStore } from './stores/views'
 
 const notice = ref({
   content: '',
   color: 'rgba(255, 255, 255, 0.8)',
 })
 const noticeRef = ref<HTMLElement | null>(null)
+const viewsStore = useViewsStore()
 
 onMounted(async () => {
   const referrer = document.createElement('a')
@@ -33,7 +35,7 @@ onMounted(async () => {
     console.error('Error occurs at get IP,', error)
     return null
   }
-  await recordVisit({ referrer: hostname, ua, ip })
+  await viewsStore.setVisitor({ referrer: hostname, ua, ip })
 })
 </script>
 

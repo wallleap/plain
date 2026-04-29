@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import { getPosts, setCounter } from '../api'
+import { getPosts } from '../api'
 import MarkdownIt from '../components/MarkdownIt.vue'
 import type { Post } from '../types/index'
+import { useViewsStore } from '../stores/views'
 
+const viewsStore = useViewsStore()
 const posts: Post[] = reactive([])
 let curPage = 1 // 当前页码，不需要响应式
 const noMore = ref(false) // 没有更多文章，用于取消监听触底
@@ -31,7 +33,8 @@ async function moreData(currentPage: number) {
  */
 async function setPostTimes(posts: Post[]) {
   try {
-    const counters: Array<{ id: number, times: number }> = await setCounter()
+    await viewsStore.getViews()
+    const counters = viewsStore.views.counter || []
     if (counters && counters.length > 0) {
       posts.forEach((post) => {
         const findData = counters.find(counter => post.num === counter.id)

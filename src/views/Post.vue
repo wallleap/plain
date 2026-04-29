@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
-import { getComments, getPost, setCounter } from '../api/index'
+import { getComments, getPost } from '../api/index'
 import { debounce } from '../utils/index'
 import { formatDate } from '../utils/format'
 import MarkdownIt from '../components/MarkdownIt.vue'
@@ -9,7 +9,9 @@ import type { Post } from '../types/index'
 import { useThemeStore } from '../stores/theme'
 import darkCSS from '../assets/css/atom-one-dark.css?raw'
 import lightCSS from '../assets/css/atom-one-light.css?raw'
+import { useViewsStore } from '../stores/views'
 
+const viewsStore = useViewsStore()
 const post: Post = reactive({
   id: 1,
   title: '',
@@ -113,7 +115,7 @@ watchEffect(async () => {
 onMounted(async () => {
   try {
     Object.assign(post, await getPost({ number: Number(route.params.num) }))
-    setCounter(post, true)
+    await viewsStore.setCounter(post)
     if (post.title)
       document.title = `${post.title} - ${import.meta.env.V_TITLE}`
     commentPageUrl.value = post.comments_url.replace('comments', '')

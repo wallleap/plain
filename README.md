@@ -33,7 +33,6 @@ This is a Vue 3 composition API based theme for [GitHub Issue API](https://docs.
 - [markdown-it](https://github.com/markdown-it/markdown-it)
 - [front-matter](https://www.npmjs.com/package/front-matter)
 - [highlight.js](https://highlightjs.org/)
-- [LeanCloud Storage](https://docs.leancloud.cn/sdk/storage/guide/setup-js/)
 - [GitHub Issue API](https://docs.github.com/en/rest)
 
 ## License

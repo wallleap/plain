@@ -19,7 +19,6 @@
     "@vueuse/core": "10.9.0",
     "front-matter": "4.0.2",
     "highlight.js": "11.9.0",
-    "leancloud-storage": "4.15.2",
     "markdown-it": "14.0.0",
     "markdown-it-emoji": "3.0.0",
     "markdown-it-footnote": "4.0.0",
