@@ -3,11 +3,15 @@ import './style.css'
 import 'virtual:uno.css'
 import '@unocss/reset/normalize.css'
 import { createPinia } from 'pinia'
+import { getBrowserLocale } from './utils'
 import directives from './directives/index'
 import App from './App.vue'
 import router from './router'
 import i18n from './locale'
 import './custom.css'
+
+const locale = getBrowserLocale()
+document.documentElement.lang = locale
 
 const pinia = createPinia()
 
