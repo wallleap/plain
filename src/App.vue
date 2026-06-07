@@ -3,14 +3,14 @@ import { onMounted, ref } from 'vue'
 import Header from './components/Header.vue'
 import Copyright from './components/Copyright.vue'
 import BackToTop from './components/BackToTop.vue'
-import { getNotice } from './api'
+import { getIP, getNotice } from './api'
 import { useViewsStore } from './stores/views'
+import type { Notice } from './types/index.ts'
 
-const notice = ref({
+const notice = ref<Notice>({
   content: '',
   color: 'rgba(255, 255, 255, 0.8)',
 })
-const noticeRef = ref<HTMLElement | null>(null)
 const viewsStore = useViewsStore()
 
 onMounted(async () => {
@@ -22,18 +22,12 @@ onMounted(async () => {
     : (referrer.hostname || '直接访问')
   const ua = navigator.userAgent
   let ip = '未知'
+  notice.value = await getNotice()
   try {
-    notice.value = await getNotice()
-    const res = await fetch('https://api.ip.sb/geoip')
-    // const res = await fetch('https://api.ip.uicop.com/json') // info.data.ip
-    if (res.ok) {
-      const info = await res.json()
-      ip = info.ip
-    }
+    ip = await getIP()
   }
   catch (error) {
     console.error('Error occurs at get IP,', error)
-    return null
   }
   await viewsStore.setVisitor({ referrer: hostname, ua, ip })
 })
@@ -49,7 +43,7 @@ onMounted(async () => {
     <Copyright v-else />
     <BackToTop />
     <div v-if="notice.content" :style="{ background: notice.color }" class="position-fixed bottom-0 left-0 right-0 m-0 p-2">
-      <div ref="noticeRef" class="m-0 flex overflow-hidden text-center text-nowrap font-size-sm text-gray-900 mask-s">
+      <div class="m-0 flex overflow-hidden text-center text-nowrap font-size-sm text-gray-900 mask-s">
         <p class="m-0 min-w-100% flex-shrink-0">
           {{ notice.content }}
         </p>

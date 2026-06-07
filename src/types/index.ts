@@ -76,3 +76,9 @@ export interface Tag {
   name: string
   count: number
 }
+
+// Notice
+export interface Notice {
+  content: string
+  color: string
+}

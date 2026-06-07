@@ -1,7 +1,7 @@
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
 import { isSpecificJSONFormat } from '../utils'
-import type { Friend, Gist, Issue, IssueLabel, IssueResponse, IssueSearchResponse, Tag } from '../types/index'
+import type { Friend, Gist, Issue, IssueLabel, IssueResponse, IssueSearchResponse, Notice, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
 const tempGistToken: string = import.meta.env.V_GITHUB_GIST_TOKEN
@@ -119,10 +119,11 @@ export async function getAbout() {
  * */
 export async function getNotice() {
   const res = await fetchWithToken<IssueResponse>(`${BLOG_PREFIX}/issues?state=closed&labels=Notice`)
-  return {
-    content: res?.[0].body,
+  const notice: Notice = {
+    content: res?.[0].body || '',
     color: `#${res?.[0].labels[0].color}`,
   }
+  return notice
 }
 
 /**
@@ -143,4 +144,32 @@ export async function requestGist(method: 'GET' | 'PATCH' = 'GET', body?: string
   })
   const data = res?.files || {}
   return data
+}
+
+/**
+ * 获取 IP
+ * 先请求 IPv4 地址，如果没有就请求 https://api.ip.sb/geoip
+ * @returns IP 地址
+ */
+async function getAutoIp(): Promise<string> {
+  const response = await fetch('https://api.ip.sb/geoip')
+  if (response.ok) {
+    const info = await response.json()
+    if (info?.ip)
+      return info.ip
+  }
+  return '未知'
+}
+export async function getIP(): Promise<string> {
+  try {
+    const res = await fetch('https://api-ipv4.ip.sb/ip')
+    const ip = await res.text()
+    if (ip)
+      return ip
+    else
+      return await getAutoIp()
+  }
+  catch (error) {
+    return await getAutoIp()
+  }
 }
