@@ -12,8 +12,6 @@ const USERNAME: string = import.meta.env.V_USERNAME
 const REPO: string = import.meta.env.V_REPOSITORY
 const FR_REPO: string = import.meta.env.V_FRIENDS_REPO
 const GIST_ID: string = import.meta.env.V_GIST_ID || ''
-const BLOG_PER_PAGE = import.meta.env.V_BLOG_COUNT || 100
-const FRIEND_PER_PAGE = import.meta.env.V_FRIEND_COUNT || 100
 if (!USERNAME || !REPO) {
   createNotify({
     message: 'V_USERNAME 和 V_REPOSITORY 没有配置',
@@ -24,14 +22,87 @@ if (!USERNAME || !REPO) {
 }
 
 // API 链接拼接
+const GITHUB_GRAPHQL = 'https://api.github.com/graphql'
 const BLOG_PREFIX = `/repos/${USERNAME}/${REPO}`
 const FR_PREFIX = `/repos/${USERNAME}/${FR_REPO}`
 const GIST_PREFIX = '/gists'
 
+/**
+ * 执行 GraphQL 查询
+ * @param params 查询参数
+ * @param params.query 查询语句
+ * @returns 查询结果
+ */
+async function fetchByGraphQL<T>({ query = '' }: { query: string }): Promise<T | undefined> {
+  const res = await fetchWithToken<{ data: T }>(GITHUB_GRAPHQL, {
+    method: 'POST',
+    body: JSON.stringify({
+      query,
+    }),
+  })
+  return res?.data
+}
+
+/**
+ * 获取博客数量
+ * @returns 博客数量
+ */
+export async function getPostsCount() {
+  const res = await fetchByGraphQL({
+    query: `query {
+      repository(owner: "${USERNAME}", name: "${REPO}") {
+        count: issues { totalCount }
+      }
+    }`,
+  }) as { repository: { count: { totalCount: number } } }
+  return res?.repository?.count?.totalCount || 0
+}
+
+/**
+ * 获取友链数量
+ * @returns 友链数量
+ */
+export async function getFriendsCount() {
+  const res = await fetchByGraphQL({
+    query: `query {
+      repository(owner: "${USERNAME}", name: "${FR_REPO}") {
+        count: issues { totalCount }
+      }
+    }`,
+  }) as { repository: { count: { totalCount: number } } }
+  return res?.repository?.count?.totalCount || 0
+}
+
+export async function getFriendsCountByComments() {
+  const res = await fetchByGraphQL({
+    query: `query {
+      repository(owner: "${USERNAME}", name: "${REPO}") {
+        issues(labels: ["Friend"], first: 1) {
+          nodes {
+            title
+            comments { totalCount }
+          }
+        }
+      }
+    }`,
+  }) as { repository: { issues: { nodes: { comments: { totalCount: number } }[] } } }
+  return res?.repository?.issues?.nodes?.[0]?.comments?.totalCount || 0
+}
+
+/**
+ * 获取博客列表
+ * @param params 查询参数
+ * @param params.page 页码
+ * @param params.pageSize 每页数量
+ * @returns 博客列表
+ */
+
 /*
  * 获取博客列表
  * */
-export async function getPosts({ page = 1, pageSize = BLOG_PER_PAGE }) {
+export async function getPosts({ page = 1, pageSize }: { page?: number, pageSize?: number }) {
+  if (!pageSize)
+    pageSize = await getPostsCount()
   const res = await fetchWithToken<IssueResponse>(`${BLOG_PREFIX}/issues?state=open&page=${page}&per_page=${pageSize}`)
   return res?.map(formatPost) || []
 }
@@ -39,21 +110,35 @@ export async function getPosts({ page = 1, pageSize = BLOG_PER_PAGE }) {
 /*
  * 获取友链列表
  * */
-export async function getFriends({ page = 1, pageSize = FRIEND_PER_PAGE }) {
+export async function getFriends({ page = 1, pageSize }: { page?: number, pageSize?: number }) {
+  if (!pageSize)
+    pageSize = await getFriendsCount()
   const res = await fetchWithToken<IssueResponse>(`${FR_PREFIX}/issues?state=closed&page=${page}&per_page=${pageSize}&direction=asc`)
   return res?.map(formatFriend) || []
 }
 
+interface CommentNode { body: string }
+interface IssueNode { comments: { nodes: CommentNode[] } }
 export async function getFriendsByComments() {
-  const res = await fetchWithToken<IssueResponse>(`${BLOG_PREFIX}/issues?state=closed&labels=Friend`)
-  if (!res?.length)
-    return []
-  const commentsUrl = res[0].comments_url
-  const friendRes = await fetchWithToken<IssueResponse>(`${commentsUrl}?page=1&per_page=${FRIEND_PER_PAGE}`)
+  const friendCount = await getFriendsCountByComments()
+  const response = await fetchByGraphQL({
+    query: `query() {
+      repository(owner: "${USERNAME}", name: "${REPO}") {
+        issues(labels: ["Friend"], states: CLOSED, first: 1) {
+          nodes {
+            comments(first: ${friendCount}) {
+              nodes { body }
+            }
+          }
+        }
+      }
+    }`,
+  }) as { repository: { issues: { nodes: IssueNode[] } } }
+  const friendRes = response?.repository?.issues?.nodes?.[0]?.comments?.nodes || []
   const friends: Friend[] = []
   if (!friendRes?.length)
     return friends
-  friendRes.forEach((fr: Issue) => {
+  friendRes.forEach((fr: CommentNode) => {
     if (isSpecificJSONFormat(fr.body)) {
       const friend = JSON.parse(fr.body)
       friends.push(friend)
@@ -65,7 +150,9 @@ export async function getFriendsByComments() {
 /*
  * 搜索
  * */
-export async function searchPosts({ keyword = '', page = 1, pageSize = BLOG_PER_PAGE }) {
+export async function searchPosts({ keyword = '', page = 1, pageSize }: { keyword?: string, page?: number, pageSize?: number }) {
+  if (!pageSize)
+    pageSize = await getPostsCount()
   const res = await fetchWithToken<IssueSearchResponse>(`/search/issues?q=${keyword}+repo:${USERNAME}/${REPO}+type:issue+state:open&page=${page}&per_page=${pageSize}`)
   const posts = res?.items?.map(formatPost) || []
   return {
