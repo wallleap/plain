@@ -21,6 +21,17 @@ export interface Issue {
   title: string
   updated_at: string
 }
+export interface IssueComment {
+  id: number
+  body: string
+  created_at: string
+  issue_url: string
+  user: {
+    id: number
+    login: string
+    avatar_url: string
+  }
+}
 export type IssueResponse = Issue[]
 export interface IssueSearchResponse {
   total_count: number

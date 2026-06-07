@@ -1,7 +1,7 @@
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
 import { isSpecificJSONFormat } from '../utils'
-import type { Friend, Gist, Issue, IssueLabel, IssueResponse, IssueSearchResponse, Notice, Tag } from '../types/index'
+import type { Friend, Gist, Issue, IssueComment, IssueLabel, IssueResponse, IssueSearchResponse, Notice, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
 const tempGistToken: string = import.meta.env.V_GITHUB_GIST_TOKEN
@@ -86,8 +86,8 @@ export async function getPost({ number = 0 }) {
  * 获取博客评论
  * */
 export async function getComments({ url = '' }) {
-  const res = await fetchWithToken(url)
-  return res
+  const res = await fetchWithToken<IssueComment[]>(`${url}`)
+  return res || []
 }
 
 /*

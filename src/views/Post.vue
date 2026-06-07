@@ -5,7 +5,7 @@ import { getComments, getPost } from '../api/index'
 import { debounce } from '../utils/index'
 import { formatDate } from '../utils/format'
 import MarkdownIt from '../components/MarkdownIt.vue'
-import type { Post } from '../types/index'
+import type { IssueComment, Post } from '../types/index'
 import { useThemeStore } from '../stores/theme'
 import darkCSS from '../assets/css/atom-one-dark.css?raw'
 import lightCSS from '../assets/css/atom-one-light.css?raw'
@@ -29,7 +29,7 @@ const post: Post = reactive({
   },
   num: 1,
 })
-const comments = reactive([]) as any[]
+const comments = reactive<IssueComment[]>([])
 const route = useRoute()
 const commentPageUrl = ref('')
 const cTheme = ref('light')
@@ -121,8 +121,11 @@ onMounted(async () => {
     commentPageUrl.value = post.comments_url.replace('comments', '')
       .replace('api.', '')
       .replace('repos/', '')
-    if (post.comments > 0)
-      comments.push(...await getComments({ url: post.comments_url }))
+    if (post.comments > 0) {
+      const res = await getComments({ url: post.comments_url })
+      if (res && res.length > 0)
+        comments.push(...res)
+    }
     await nextTick()
     if (route.hash && post.body)
       scrollToAnchor(route.hash.slice(1))

@@ -24,8 +24,8 @@ onMounted(async () => {
     // 是否循环
     loop: true,
   })
-  about.value = await getAbout()
-  if (about.value.includes('busuanzi')) {
+  const aboutText = await getAbout()
+  if (aboutText?.includes?.('busuanzi')) {
     document.querySelectorAll('script').forEach((script) => {
       if (script.src.includes('busuanzi'))
         script.remove()
@@ -36,6 +36,7 @@ onMounted(async () => {
     bScript.async = true
     document.body.appendChild(bScript)
   }
+  about.value = aboutText || ''
 })
 
 onUnmounted(() => {
