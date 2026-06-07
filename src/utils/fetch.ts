@@ -22,18 +22,17 @@ const ghOpt = {
 /*
  * 获取数据（携带 GitHub Token）
  * */
-export async function fetchWithToken(url: string, options?: RequestInit) {
+export async function fetchWithToken<T>(url: string, options?: RequestInit): Promise<T | null> {
   const requestUrl = url.startsWith('http') ? url : `${GH_API}${url}`
   try {
     const response = await fetch(requestUrl, { ...ghOpt, ...options })
     if (!response.ok)
       throw new Error(`HTTP error! status: ${response.status}`)
 
-    const data = await response.json()
-    return data
+    return response.json() as Promise<T>
   }
   catch (error) {
-    console.error('Error occurs at fetch Issues,', error)
+    console.error(`Error occurs at fetchWithToken ${requestUrl}`, error)
     return null
   }
 }

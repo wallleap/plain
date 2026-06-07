@@ -1,3 +1,40 @@
+// GitHub
+// Issue
+export interface IssueLabel {
+  id: number
+  color: string
+  name: string
+}
+export interface IssueMilestone {
+  id: number
+  title: string
+}
+export interface Issue {
+  id: number
+  body: string
+  comments: number
+  comments_url: string
+  created_at: string
+  labels: IssueLabel[]
+  milestone: IssueMilestone
+  number: number
+  title: string
+  updated_at: string
+}
+export type IssueResponse = Issue[]
+export interface IssueSearchResponse {
+  total_count: number
+  items: Issue[]
+}
+
+// Gist
+export interface Gist {
+  id: number
+  files: Record<string, {
+    content: string
+  }>
+}
+
 // Post
 export interface Post {
   id: number

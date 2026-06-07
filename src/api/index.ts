@@ -1,7 +1,7 @@
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
 import { isSpecificJSONFormat } from '../utils'
-import type { Friend, Tag } from '../types/index'
+import type { Friend, Gist, Issue, IssueLabel, IssueResponse, IssueSearchResponse, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
 
 const tempGistToken: string = import.meta.env.V_GITHUB_GIST_TOKEN
@@ -32,29 +32,28 @@ const GIST_PREFIX = '/gists'
  * 获取博客列表
  * */
 export async function getPosts({ page = 1, pageSize = BLOG_PER_PAGE }) {
-  const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=open&page=${page}&per_page=${pageSize}`)
-  return res.map(formatPost)
+  const res = await fetchWithToken<IssueResponse>(`${BLOG_PREFIX}/issues?state=open&page=${page}&per_page=${pageSize}`)
+  return res?.map(formatPost) || []
 }
 
 /*
  * 获取友链列表
  * */
 export async function getFriends({ page = 1, pageSize = FRIEND_PER_PAGE }) {
-  const res = await fetchWithToken(`${FR_PREFIX}/issues?state=closed&page=${page}&per_page=${pageSize}&direction=asc`)
-  return res.map(formatFriend)
+  const res = await fetchWithToken<IssueResponse>(`${FR_PREFIX}/issues?state=closed&page=${page}&per_page=${pageSize}&direction=asc`)
+  return res?.map(formatFriend) || []
 }
 
-interface Fr {
-  body: string
-}
 export async function getFriendsByComments() {
-  const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=closed&labels=Friend`)
+  const res = await fetchWithToken<IssueResponse>(`${BLOG_PREFIX}/issues?state=closed&labels=Friend`)
   if (!res?.length)
     return []
   const commentsUrl = res[0].comments_url
-  const friendRes = await fetchWithToken(`${commentsUrl}?page=1&per_page=${FRIEND_PER_PAGE}`)
+  const friendRes = await fetchWithToken<IssueResponse>(`${commentsUrl}?page=1&per_page=${FRIEND_PER_PAGE}`)
   const friends: Friend[] = []
-  friendRes.forEach((fr: Fr) => {
+  if (!friendRes?.length)
+    return friends
+  friendRes.forEach((fr: Issue) => {
     if (isSpecificJSONFormat(fr.body)) {
       const friend = JSON.parse(fr.body)
       friends.push(friend)
@@ -67,10 +66,10 @@ export async function getFriendsByComments() {
  * 搜索
  * */
 export async function searchPosts({ keyword = '', page = 1, pageSize = BLOG_PER_PAGE }) {
-  const res = await fetchWithToken(`/search/issues?q=${keyword}+repo:${USERNAME}/${REPO}+type:issue+state:open&page=${page}&per_page=${pageSize}`)
-  const posts = res?.items.map(formatPost)
+  const res = await fetchWithToken<IssueSearchResponse>(`/search/issues?q=${keyword}+repo:${USERNAME}/${REPO}+type:issue+state:open&page=${page}&per_page=${pageSize}`)
+  const posts = res?.items?.map(formatPost) || []
   return {
-    total_count: res?.total_count,
+    total_count: res?.total_count || 0,
     posts,
   }
 }
@@ -79,8 +78,8 @@ export async function searchPosts({ keyword = '', page = 1, pageSize = BLOG_PER_
  * 获取博客详情
  * */
 export async function getPost({ number = 0 }) {
-  const res = await fetchWithToken(`${BLOG_PREFIX}/issues/${number}?state=open`)
-  return formatPost(res)
+  const res = await fetchWithToken<Issue>(`${BLOG_PREFIX}/issues/${number}?state=open`)
+  return res ? formatPost(res) : null
 }
 
 /*
@@ -96,12 +95,12 @@ export async function getComments({ url = '' }) {
  * */
 export async function getTags() {
   const filterLabel = ['Notice', 'Inspiration', 'Friend', 'Book', 'About', 'Counter']
-  const res: Tag[] = await fetchWithToken(`${BLOG_PREFIX}/labels?page=1&per_page=1000`)
-  const resFilter = res.filter(item => !filterLabel.includes(item.name))
-  const tags = resFilter.map(item => ({
+  const res = await fetchWithToken<IssueLabel[]>(`${BLOG_PREFIX}/labels?page=1&per_page=1000`)
+  const resFilter = res?.filter(item => !filterLabel.includes(item.name)) || []
+  const tags: Tag[] = resFilter.map(item => ({
     id: item.id,
     name: item.name,
-    count: item.count || 0,
+    count: 0,
   }))
 
   return tags
@@ -111,7 +110,7 @@ export async function getTags() {
  * 获取关于页面
  * */
 export async function getAbout() {
-  const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=closed&labels=About`)
+  const res = await fetchWithToken<IssueResponse>(`${BLOG_PREFIX}/issues?state=closed&labels=About`)
   return res?.[0].body
 }
 
@@ -119,7 +118,7 @@ export async function getAbout() {
  * 获取通知
  * */
 export async function getNotice() {
-  const res = await fetchWithToken(`${BLOG_PREFIX}/issues?state=closed&labels=Notice`)
+  const res = await fetchWithToken<IssueResponse>(`${BLOG_PREFIX}/issues?state=closed&labels=Notice`)
   return {
     content: res?.[0].body,
     color: `#${res?.[0].labels[0].color}`,
@@ -135,7 +134,7 @@ export async function getNotice() {
 export async function requestGist(method: 'GET' | 'PATCH' = 'GET', body?: string) {
   if (!GIST_ID || !GIST_TOKEN)
     return null
-  const res = await fetchWithToken(`${GIST_PREFIX}/${GIST_ID}`, {
+  const res = await fetchWithToken<Gist>(`${GIST_PREFIX}/${GIST_ID}`, {
     method,
     headers: {
       Authorization: `Bearer ${GIST_TOKEN}`,

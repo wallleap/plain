@@ -1,4 +1,5 @@
 import fm from 'front-matter'
+import type { Issue } from '../types'
 
 // 格式化日期
 export function formatDate(date: string) {
@@ -60,21 +61,8 @@ function formatBody(body: string) {
 /*
  * 格式化文章列表
  * */
-interface Post {
-  id: number
-  title: string
-  comments: number
-  comments_url: string
-  created_at: string
-  updated_at: string
-  labels: string[]
-  milestone: { name: string }
-  summary: string
-  body: string
-  number: number
-}
-export function formatPost(post: Post) {
-  const { id, title, comments, comments_url, created_at, updated_at, labels, body, milestone, number } = post
+export function formatPost(issue: Issue) {
+  const { id, title, comments, comments_url, created_at, updated_at, labels, body, milestone, number } = issue
   const obj = formatBody(body)
   return {
     id,
