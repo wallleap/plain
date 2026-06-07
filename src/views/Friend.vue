@@ -16,7 +16,7 @@ const friends: Friend[] = reactive([])
 document.title = `${import.meta.env.V_TITLE} | 友链`
 
 onMounted(async () => {
-  if (friendRepo)
+  if (friendRepo !== '')
     Object.assign(friends, await getFriends({}))
   else
     Object.assign(friends, await getFriendsByComments())
