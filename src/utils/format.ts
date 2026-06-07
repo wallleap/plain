@@ -1,4 +1,5 @@
 import fm from 'front-matter'
+import type { Friend, Issue, Post } from '../types'
 
 // 格式化日期
 export function formatDate(date: string) {
@@ -12,18 +13,12 @@ export function formatDate(date: string) {
 /*
  * 格式化文章内容
  * */
-interface TempBody {
-  title: string
-  summary: string
-  body: string
-  date: string
-  updated: string
-}
+type TempBody = Pick<Post, 'title' | 'summary' | 'body' | 'date' | 'updated'>
+const annotationRegex = /^(.+)?\r\n\s*(.+)?\r\n/
+const markReg = /^\[(.+)\]: # '[^']*'?\r\n/
+const firstLineReg = /^(.+)?\s+/
+const frontMatterReg = /^---\s+.*\s+---/s
 function formatBody(body: string) {
-  const annotationRegex = /^(.+)?\r\n\s*(.+)?\r\n/
-  const markReg = /^\[(.+)\]: # '[^']*'?\r\n/
-  const firstLineReg = /^(.+)?\s+/
-  const frontMatterReg = /^---\s+.*\s+---/s
   const obj: TempBody = {
     title: '',
     summary: '',
@@ -33,9 +28,9 @@ function formatBody(body: string) {
   }
   // 有 front matter
   if (frontMatterReg.test(obj.body)) {
-    const frontMatter = fm(obj.body)
+    const frontMatter = fm<TempBody>(obj.body)
     if (frontMatter.attributes) {
-      const { title, date, updated } = frontMatter.attributes as TempBody
+      const { title, date, updated } = frontMatter.attributes
       obj.title = title
       obj.date = date
       obj.updated = updated
@@ -43,15 +38,13 @@ function formatBody(body: string) {
     if (frontMatter.body)
       obj.body = frontMatter.body
   }
-  // 其他
-  if (firstLineReg.test(obj.body)) {
-    const result = firstLineReg.exec(obj.body)
-    if (result?.[1])
-      obj.summary = result[1]
+  const firstLineResult = firstLineReg.exec(obj.body)
+  if (firstLineResult?.[1]) {
+    obj.summary = firstLineResult[1]
     if (markReg.test(obj.body)) {
-      const result = annotationRegex.exec(obj.body)
-      if (result?.[2])
-        obj.summary = result[2]
+      const annotationResult = annotationRegex.exec(obj.body)
+      if (annotationResult?.[2])
+        obj.summary = annotationResult[2]
     }
   }
   return obj
@@ -60,23 +53,10 @@ function formatBody(body: string) {
 /*
  * 格式化文章列表
  * */
-interface Post {
-  id: number
-  title: string
-  comments: number
-  comments_url: string
-  created_at: string
-  updated_at: string
-  labels: string[]
-  milestone: { name: string }
-  summary: string
-  body: string
-  number: number
-}
-export function formatPost(post: Post) {
-  const { id, title, comments, comments_url, created_at, updated_at, labels, body, milestone, number } = post
+export function formatPost(issue: Issue): Post {
+  const { id, title, comments, comments_url, created_at, updated_at, labels, body, milestone, number } = issue
   const obj = formatBody(body)
-  return {
+  const post = {
     id,
     times: 1,
     title: obj.title || title,
@@ -90,46 +70,37 @@ export function formatPost(post: Post) {
     body: obj.body,
     num: number,
   }
+  return post
 }
 
 /*
  * 格式化友链
  * */
-interface Friend {
-  id: number
-  body: string
-  labels: {
-    color: string
-    name: string
-  }[]
-}
-export function formatFriend(friend: Friend) {
+export function formatFriend(friend: Issue): Friend {
   const { body, labels } = friend
+  const tag = {
+    name: labels?.[0]?.name || '',
+    color: labels?.[0]?.color || '',
+    bg: '',
+  }
   const regex = /^name:\s(.*)\r\nurl:\s(.*)\r\navatar:\s(.*)\r\ndesc:\s(.*)$/
-  if (!regex.test(body)) {
+  const result = regex.exec(body)
+  if (!result) {
     return {
       name: '',
       url: '#',
       avatar: '',
       desc: '',
-      tag: {
-        name: labels?.[0].name || '',
-        color: '',
-        bg: '',
-      },
+      tag,
     }
   }
-  const result = regex.exec(body)
-  const labelName = labels ? labels[0] ? labels[0].name : '' : ''
+
+  const [, name, url, avatar, desc] = result
   return {
-    name: result?.slice(1)[0],
-    url: result?.slice(1)[1],
-    avatar: result?.slice(1)[2],
-    desc: result?.slice(1)[3],
-    tag: {
-      name: labelName,
-      color: '',
-      bg: '',
-    },
+    name,
+    url,
+    avatar,
+    desc,
+    tag,
   }
 }
