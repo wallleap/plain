@@ -29,7 +29,12 @@ onMounted(async () => {
   catch (error) {
     console.error('Error occurs at get IP,', error)
   }
-  await viewsStore.setVisitor({ referrer: hostname, ua, ip })
+  try {
+    await viewsStore.setVisitor({ referrer: hostname, ua, ip })
+  }
+  catch (error) {
+    console.error('Visitor statistics update failed', error)
+  }
 })
 </script>
 

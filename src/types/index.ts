@@ -40,11 +40,15 @@ export interface IssueSearchResponse {
 
 // Gist
 export interface Gist {
-  id: number
-  files: Record<string, {
-    content: string
-  }>
+  id?: string
+  files: GistFiles
 }
+export type GistFiles = Record<string, {
+  content?: string
+  truncated?: boolean
+  size?: number
+  raw_url?: string
+}>
 
 // Post
 export interface Post {

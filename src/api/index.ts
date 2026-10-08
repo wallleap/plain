@@ -1,8 +1,9 @@
 import { fetchWithToken } from '../utils/fetch'
 import { formatFriend, formatPost } from '../utils/format'
 import { isSpecificJSONFormat } from '../utils'
-import type { Friend, Gist, Issue, IssueComment, IssueLabel, IssueResponse, IssueSearchResponse, Notice, Tag } from '../types/index'
+import type { Friend, Issue, IssueComment, IssueLabel, IssueResponse, IssueSearchResponse, Notice, Tag } from '../types/index'
 import { createNotify } from '../services/notifyService'
+import { requestGistWithConfig } from './gist'
 
 const tempGistToken: string = import.meta.env.V_GITHUB_GIST_TOKEN
 const GIST_TOKEN = tempGistToken?.split(', ')?.join('')
@@ -25,7 +26,6 @@ if (!USERNAME || !REPO) {
 const GITHUB_GRAPHQL = 'https://api.github.com/graphql'
 const BLOG_PREFIX = `/repos/${USERNAME}/${REPO}`
 const FR_PREFIX = `/repos/${USERNAME}/${FR_REPO}`
-const GIST_PREFIX = '/gists'
 
 /**
  * 执行 GraphQL 查询
@@ -220,17 +220,12 @@ export async function getNotice() {
  * @returns Gist 文件内容
  */
 export async function requestGist(method: 'GET' | 'PATCH' = 'GET', body?: string) {
-  if (!GIST_ID || !GIST_TOKEN)
-    return null
-  const res = await fetchWithToken<Gist>(`${GIST_PREFIX}/${GIST_ID}`, {
+  return requestGistWithConfig({
+    gistId: GIST_ID,
+    token: GIST_TOKEN,
     method,
-    headers: {
-      Authorization: `Bearer ${GIST_TOKEN}`,
-    },
     body,
   })
-  const data = res?.files || {}
-  return data
 }
 
 /**
